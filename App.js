@@ -1,21 +1,30 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import Main from './components/MainComponent.js';
+import * as firebase from 'firebase';
+import { Provider } from 'react-redux';
+import { ConfigureStore } from './redux/configureStore.js';
+
+var firebaseConfig = {
+  apiKey: "AIzaSyDzUSm6aFfL9CLxqCqcUHXPPvC5Ohb4DkQ",
+  authDomain: "disscussionforum.firebaseapp.com",
+  databaseURL: "https://disscussionforum.firebaseio.com",
+  projectId: "disscussionforum",
+  storageBucket: "disscussionforum.appspot.com",
+  messagingSenderId: "18040025944",
+  appId: "1:18040025944:web:ce979327933993da476b2d",
+  measurementId: "G-2Q6JM432R2"
+};
+// Initialize Firebase
+if(firebase.apps.length == 0){
+  firebase.initializeApp(firebaseConfig);
+}
+
+const store = ConfigureStore();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <Main/>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
