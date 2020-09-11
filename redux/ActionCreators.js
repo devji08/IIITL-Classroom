@@ -1,6 +1,7 @@
 import * as ActionTypes from './ActionTypes.js';
 import * as firebase from 'firebase';
 import { ToastAndroid } from 'react-native';
+import db from '../components/firebase.js';
 
 export const loginUser = (email, password, navigate) => async dispatch => {
     console.log("thunk");
@@ -45,4 +46,41 @@ export const signOutUser = () => async dispatch => {
 export const removeUser = () => ({
     type : ActionTypes.REMOVE_USER,
     payload : null
+});
+
+
+export const signUpUser = (email, password, userName, goBack) => async dispatch => {
+    console.log("Signup");
+    dispatch(signUpUserLoading());
+    firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(user => {
+            user.user.updateProfile({
+                displayName: userName
+            })
+            .catch(error => dispatch(signUpuserError(error.msg)));
+            user.user.sendEmailVerification()
+            .then(() => {
+                ToastAndroid.show("Please check your Email and Log-in again",ToastAndroid.LONG);
+                goBack();
+            })
+            .catch(error => dispatch(signUpUserError(error.message)));
+            db.collection('users').doc(email).set({
+                email : email,
+                userName : userName,
+                posts : []
+            });
+        })
+        .catch(error => {dispatch(signUpUserError(error.message))});
+};
+
+export const signUpUserLoading = () => ({
+    type : ActionTypes.SIGNUP_USER_LOADING,
+    payload : true
+});
+
+export const signUpUserError = (errorMsg) => ({
+    type : ActionTypes.SIGNUP_USER_ERROR,
+    payload : errorMsg
 });

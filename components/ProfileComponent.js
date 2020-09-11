@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Button } from 'react-native';
 import {Text, Avatar, Accessory} from 'react-native-elements';
 import { connect } from 'react-redux';
+import db from './firebase.js';
 
 const mapStateToProps = state => {
     return{
-        user: state.user
+        user: state.authentication.user
     }
 
 };
@@ -17,17 +18,16 @@ class UserProfile extends Component {
 
     imageAdress() {
         if(this.props.user.photoURL!=null){
-            console.log('enter');
             return {uri : this.props.user.photoURL};
         }
         else{
-            console.log('null');
             return null;
         }
     }
 
     render() {
         const {navigate} = this.props.navigation;
+        console.log(this.props.user);
         if(this.props.user != null){
             return(
                 <View style={styles.container}>

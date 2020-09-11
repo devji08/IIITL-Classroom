@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, ToastAndroid, Text } from 'react-native';
-import { Button, Input, Icon, label } from 'react-native-elements';
+import { View, StyleSheet, Text } from 'react-native';
+import { Button, Input, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { loginUser } from '../redux/ActionCreators.js';
 
 const mapStateToProps = state => {
     return{
-        user : state.user,
-        isLoading : state.isLoading,
-        errormsg : state.errormsg
+        user : state.authentication.user,
+        isLoading : state.authentication.isLoading,
+        errormsg : state.authentication.errorMsg
     }
 };
 
@@ -28,7 +28,6 @@ class Login extends Component {
    
     render() {
         const {navigate} = this.props.navigation;
-        
         return(
             <View style = {styles.container}>
                 <Input

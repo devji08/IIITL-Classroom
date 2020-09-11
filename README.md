@@ -1,6 +1,6 @@
 # DiscussionForum1
 
-pre-requisite:
+pre-requisite :
   expo-cli
   yarn
 Steps to run the apllication on your machine:

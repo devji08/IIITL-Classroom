@@ -1,14 +1,25 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import {createLogger} from 'redux-logger';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 import { authentication } from './authentication.js';
+import { signUpReducer } from './signupReducer.js';
+import { persistStore, persistCombineReducers } from 'redux-persist';
+import AsyncStorage from '@react-native-community/async-storage';
 
-const loggerMiddleware = createLogger();
+const config = {
+    key: 'root',
+    storage: AsyncStorage,
+    debug: true
+}
+
 
 export const ConfigureStore = () => {
     const store = createStore(
-        authentication,
-        applyMiddleware(thunk)
+        combineReducers({
+            signUpReducer,
+            authentication,
+        }),
+        applyMiddleware(thunk, logger)
     );
-    return store;
+    return {store};
 }

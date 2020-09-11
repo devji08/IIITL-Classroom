@@ -6,7 +6,7 @@ import { signOutUser } from '../redux/ActionCreators.js';
 
 const mapStateToProps = state => {
     return{
-        user: state.user
+        user: state.authentication.user
     }
 };
 
