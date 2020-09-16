@@ -4,6 +4,8 @@ import { Icon, Button } from 'react-native-elements';
 import Login from './LoginComponent.js';
 import SignUp from './SignupComponent.js';
 import UserProfile from './ProfileComponent.js';
+import Subjects from './SubjectsComponent.js';
+import Feed from './FeedComponent.js';
 import Authentication from './AuthenticationComponent.js';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -85,6 +87,42 @@ function ProfileNavigatorScreen() {
   );
 }
 
+const SubjectsNavigator = createStackNavigator();
+
+function SubjectsNavigatorScreen() {
+  return(
+    <SubjectsNavigator.Navigator
+      initialRouteName='Subjects'
+    >
+      <SubjectsNavigator.Screen
+        name = 'Subjects'
+        component = {Subjects}
+        options = {
+          ({navigation}) => ({
+            headerLeft: () => (
+              <Button
+                type = 'clear'
+                icon = {
+                  <Icon
+                    name = "menu"
+                    size = {30}
+                    color = 'grey'
+                  />
+                }
+                onPress={()=> navigation.toggleDrawer()}
+              />
+            )
+          })
+        }
+      />
+      <SubjectsNavigator.Screen
+        name = 'Feed'
+        component = {Feed}
+      />
+    </SubjectsNavigator.Navigator>
+  );
+}
+
 const MainNavigator = createDrawerNavigator();
 
 function MainNavigatorDrawer() {
@@ -101,7 +139,21 @@ function MainNavigatorDrawer() {
                       name='user'
                       type='font-awesome'
                       size={24}
-                      color={tintColor}
+                      color='grey'
+                  />
+              )
+          }}
+          />
+          <MainNavigator.Screen
+            name = 'Subjects'
+            component = {SubjectsNavigatorScreen}
+            options={{
+              drawerIcon: ({tintColor}) => (
+                  <Icon
+                      name='book'
+                      type='font-awesome'
+                      size={24}
+                      color='grey'
                   />
               )
           }}
@@ -115,7 +167,7 @@ function MainNavigatorDrawer() {
                       name='sign-in'
                       type='font-awesome'
                       size={24}
-                      color={tintColor}
+                      color='grey'
                   />
               )
           }}

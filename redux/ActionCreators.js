@@ -13,7 +13,7 @@ export const loginUser = (email, password, navigate) => async dispatch => {
             if(user.user.emailVerified){
                 dispatch(addUser(user.user));
                 navigate('Authentication');
-                navigate('Profile');
+                navigate('Subjects');
             }
             else{
                 dispatch(addUserError('Account not Verified'));
@@ -82,5 +82,48 @@ export const signUpUserLoading = () => ({
 
 export const signUpUserError = (errorMsg) => ({
     type : ActionTypes.SIGNUP_USER_ERROR,
+    payload : errorMsg
+});
+
+export const fetchSubject = (sem) => async dispatch => {
+    console.log("fetch subject");
+    db.collection('Subjects')
+    .doc(`${sem}`).
+    get().
+    then(function(doc) {
+        dispatch(subjectFetch(doc.data().Subjects));
+    })
+    .catch(error => {dispatch(subjectError(error))});
+};
+
+export const subjectFetch = (subjects) => ({
+    type : ActionTypes.SUBJECT_FETCH,
+    payload : subjects
+});
+
+export const subjectError = (errorMsg) => ({
+    type : ActionTypes.SUBJECT_ERROR,
+    payload : errorMsg
+});
+
+export const fetchPost = (subCode) => async dispatch => {
+    console.log("fetch post");
+    dispatch(feedLoading());
+    db.collection(subCode).onSnapshot()
+    .catch(error => {dispatch(feedError(error))});
+};
+
+export const feedLoading = () => ({
+    type : ActionTypes.FEED_LOADING,
+    payload : true
+});
+
+export const feedFetch = (posts) => ({
+    type : ActionTypes.FEED_FETCH,
+    payload : posts
+});
+
+export const feedError = (errorMsg) => ({
+    type : ActionTypes.FEED_ERROR,
     payload : errorMsg
 });
