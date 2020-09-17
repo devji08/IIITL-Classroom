@@ -37,8 +37,6 @@ export class Subjects extends Component {
         }
         else{
             var subs = Object.keys(this.props.subjects);
-            console.log(subs);
-            console.log(this.props.subjects.IAIN532C);
             return (
                 <ScrollView style={styles.container}>
                     {

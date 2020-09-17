@@ -4,7 +4,6 @@ import { ToastAndroid } from 'react-native';
 import db from '../components/firebase.js';
 
 export const loginUser = (email, password, navigate) => async dispatch => {
-    console.log("thunk");
     dispatch(addUserLoading());
     firebase
         .auth()
@@ -38,7 +37,6 @@ export const addUser = (user) => ({
 });
 
 export const signOutUser = () => async dispatch => {
-    console.log("signout");    
     firebase.auth().signOut()
     .then(() => dispatch(removeUser()));
 }
@@ -50,7 +48,6 @@ export const removeUser = () => ({
 
 
 export const signUpUser = (email, password, userName, goBack) => async dispatch => {
-    console.log("Signup");
     dispatch(signUpUserLoading());
     firebase
         .auth()
@@ -86,7 +83,6 @@ export const signUpUserError = (errorMsg) => ({
 });
 
 export const fetchSubject = (sem) => async dispatch => {
-    console.log("fetch subject");
     db.collection('Subjects')
     .doc(`${sem}`).
     get().
@@ -107,7 +103,6 @@ export const subjectError = (errorMsg) => ({
 });
 
 export const fetchPost = (subCode) => async dispatch => {
-    console.log("fetch post");
     dispatch(feedLoading());
     db.collection(subCode).onSnapshot()
     .catch(error => {dispatch(feedError(error))});

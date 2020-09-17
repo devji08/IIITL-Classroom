@@ -38,15 +38,24 @@ class SignUp extends Component {
     }
     
     handleSignup(userName, email, password, cpassword, goBack) {
-        if(password == cpassword){
-            this.props.signUpUser(email, password, userName, goBack);
-        }
-        else{
+        if(password != cpassword){
             this.setState({
                 password:'',
                 cpassword:''
             });
             this.props.signUpUserError('Password missmatch !');
+        }
+        else if(email.substring(9,15)!='@iiitl'){
+            this.setState({
+                password:'',
+                cpassword:'',
+                email : '',
+                userName : ''
+            });
+            this.props.signUpUserError('Use you official E-mail !');
+        }
+        else{
+            this.props.signUpUser(email, password, userName, goBack);
         }
     }
 
