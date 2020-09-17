@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
 import Login from './LoginComponent.js';
 import SignUp from './SignupComponent.js';
@@ -10,7 +10,6 @@ import Authentication from './AuthenticationComponent.js';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import * as firebase from 'firebase';
 
 const LoginNavigator = createStackNavigator();
 

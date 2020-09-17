@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Button } from 'react-native';
 import {Text, Avatar, Accessory} from 'react-native-elements';
 import { connect } from 'react-redux';
-import db from './firebase.js';
+import DefaultComponent from './DefaultComponent.js';
 
 const mapStateToProps = state => {
     return{
@@ -51,12 +51,7 @@ class UserProfile extends Component {
         }
         else{
             return(
-                <View style={styles.container}>
-                    <Button 
-                        title = "Login"
-                        onPress = {() => navigate('Authentication')}
-                    />
-                </View>
+               <DefaultComponent navigate={navigate}/>
             );
         }
     }

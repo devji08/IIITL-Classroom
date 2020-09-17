@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { fetchSubject } from '../redux/ActionCreators.js';
 import { Loading } from './loadingComponent.js';
+import DefaultComponent from './DefaultComponent.js';
 
 const mapStateToProps = (state) => {
     return {
@@ -27,25 +28,32 @@ export class Subjects extends Component {
 
     render() {
         const {navigate} = this.props.navigation;
-        var year  = parseInt(this.props.user.email.substring(3,7));
-        var currentDate = new Date();
-        var addmissionDate = new Date(year, 7, 1);
-        var sem = Math.ceil((currentDate - addmissionDate)/(1000*60*60*24*30*6));
-        if(this.props.subjects == null) this.props.fetchSubject(sem);
-        if(this.props.isLoading){
-            return (<Loading/>);
+        if(this.props.user!=null){
+            var year  = parseInt(this.props.user.email.substring(3,7));
+            var currentDate = new Date();
+            var addmissionDate = new Date(year, 7, 1);
+            var sem = Math.ceil((currentDate - addmissionDate)/(1000*60*60*24*30*6));
+            if(this.props.subjects == null) this.props.fetchSubject(sem);
+            if(this.props.isLoading){
+                return (<Loading/>);
+            }
+            else{
+                var subs = Object.keys(this.props.subjects);
+                return (
+                    <ScrollView style={styles.container}>
+                        {
+                            subs.map(sub => (
+                                <Subject key={sub} sem={sem+'th semester'} navigate={navigate} subCode={sub} subName={this.props.subjects[sub]}/>
+                            ))
+                        }
+                    </ScrollView>
+                )
+            }
         }
         else{
-            var subs = Object.keys(this.props.subjects);
-            return (
-                <ScrollView style={styles.container}>
-                    {
-                        subs.map(sub => (
-                            <Subject key={sub} sem={sem+'th semester'} navigate={navigate} subCode={sub} subName={this.props.subjects[sub]}/>
-                        ))
-                    }
-                </ScrollView>
-            )
+            return(
+                <DefaultComponent navigate={navigate}/>
+            );
         }
     }
 }
