@@ -21,10 +21,6 @@ const mapDispatchToProps = dispatch => ({
 
 
 export class Subjects extends Component {
-    
-    constructor(props){
-        super(props);
-    }
 
     render() {
         const {navigate} = this.props.navigation;
@@ -39,6 +35,7 @@ export class Subjects extends Component {
             }
             else{
                 var subs = Object.keys(this.props.subjects);
+                subs.sort();
                 return (
                     <ScrollView style={styles.container}>
                         {

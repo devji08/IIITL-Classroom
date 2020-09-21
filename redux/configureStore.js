@@ -1,12 +1,14 @@
-import { createStore, applyMiddleware, combineReducers } from 'redux';
-import logger from 'redux-logger';
-import thunk from 'redux-thunk';
-import { authentication } from './authentication.js';
-import { subjectReducer } from './subjectReducer.js';
-import { signUpReducer } from './signupReducer.js';
-import { feedReducer } from './feedReducer.js';
-import { persistStore, persistCombineReducers } from 'redux-persist';
-import AsyncStorage from '@react-native-community/async-storage';
+import { createStore, applyMiddleware, combineReducers } from 'redux'
+import logger from 'redux-logger'
+import thunk from 'redux-thunk'
+import { authentication } from './authentication.js'
+import { subjectReducer } from './subjectReducer.js'
+import { signUpReducer } from './signupReducer.js'
+import { feedReducer } from './feedReducer.js'
+import { postReducer } from './postReducer.js'
+import { postDetailReducer } from './postDetailReducer.js'
+import { persistStore, persistCombineReducers } from 'redux-persist'
+import AsyncStorage from '@react-native-community/async-storage'
 
 const config = {
     key: 'root',
@@ -22,6 +24,8 @@ export const ConfigureStore = () => {
             authentication,
             subjectReducer,
             feedReducer,
+            postReducer,
+            postDetailReducer
         }),
         applyMiddleware(thunk, logger)
     );

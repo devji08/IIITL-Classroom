@@ -102,16 +102,95 @@ export const subjectError = (errorMsg) => ({
     payload : errorMsg
 });
 
-export const fetchPost = (subCode) => async dispatch => {
-    dispatch(feedLoading());
-    db.collection(subCode).onSnapshot()
-    .catch(error => {dispatch(feedError(error))});
-};
+export const addPost = (email, title, image, subCode) => async dispatch => {
 
-export const feedLoading = () => ({
-    type : ActionTypes.FEED_LOADING,
+    dispatch(addPostLoading());
+    var postRef = db.collection('posts').doc();
+    var id = postRef.id;
+
+    if(image!=null){
+        const fileExt = image.split('.').pop();
+        const response = await fetch(image);
+        const blob = await response.blob();
+        const fileName = `${id}.${fileExt}`;
+        
+        var imageRef = firebase.storage().ref(`posts/${fileName}`);
+        var uploadTask = imageRef.put(blob);
+        uploadTask.on(
+            firebase.storage.TaskEvent.STATE_CHANGED,
+            snapshot => {
+                console.log('Snapshot : '+snapshot.state);
+                if(snapshot.state === firebase.storage.TaskState.SUCCESS){
+                    console.log("Success");
+                }
+            },
+            error => {
+                console.log(error.toString());
+                dispatch(addPostError(error));
+            },
+            () => {
+                imageRef.getDownloadURL()
+                .then((downloadURL) => {
+                    postRef.set({
+                        id :id,
+                        user : email,
+                        title : title,
+                        image : downloadURL,
+                        subCode : subCode,
+                        timeStamp : firebase.firestore.FieldValue.serverTimestamp(),
+                        date : new Date()
+                    });
+                    dispatch(addPostDone());
+                })
+                .catch(error => {
+                    dispatch(addPostError(error));
+                });
+            }
+        );
+    }
+    else{
+        postRef.set({
+            id : id,
+            user : email,
+            title : title,
+            image : image,
+            subCode : subCode,
+            timeStamp : firebase.firestore.FieldValue.serverTimestamp(),
+            date : new Date()
+        });
+        dispatch(addPostDone());
+    }
+}
+
+export const addPostDone = () => ({
+    type : ActionTypes.ADD_POST,
+    payload: null
+});
+
+export const addPostLoading = () => ({
+    type : ActionTypes.ADD_POST_LOADING,
     payload : true
 });
+
+export const addPostError = (error) => ({
+    type : ActionTypes.ADD_POST_ERROR,
+    payload : error
+});
+
+export const fetchPost = () => async dispatch => {
+    db.collection("posts")
+    .orderBy('timeStamp', 'desc')
+    .onSnapshot(function(querySnapshot) {
+        var posts = [];
+        querySnapshot.forEach(function(doc){
+            posts.push(doc.data());
+        });
+        dispatch(feedFetch(posts));
+    })
+    .catch(error => {
+        dispatch(feedError(error))
+    });
+};
 
 export const feedFetch = (posts) => ({
     type : ActionTypes.FEED_FETCH,
@@ -120,5 +199,29 @@ export const feedFetch = (posts) => ({
 
 export const feedError = (errorMsg) => ({
     type : ActionTypes.FEED_ERROR,
+    payload : errorMsg
+});
+
+export const fetchPostUser = (email) => async dispatch => {
+    console.log("fetchPostUser");
+    console.log(email);
+    db.collection("users").doc(email)
+    .onSnapshot(function(doc) {
+        var user = doc.data();
+        dispatch(postUserFetch(user));
+        console.log("Done");
+    })
+    .catch(error => {
+        dispatch(postUserError(error))
+    });
+};
+
+export const postUserFetch = (user) => ({
+    type : ActionTypes.FETCH_USER,
+    payload : user
+});
+
+export const postUserError = (errorMsg) => ({
+    type : ActionTypes.FETCH_USER_ERROR,
     payload : errorMsg
 });

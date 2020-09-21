@@ -8,7 +8,8 @@ var firebaseConfig = {
     storageBucket: "disscussionforum.appspot.com",
     messagingSenderId: "18040025944",
     appId: "1:18040025944:web:ce979327933993da476b2d",
-    measurementId: "G-2Q6JM432R2"
+    measurementId: "G-2Q6JM432R2",
+    storageBucket : "gs://disscussionforum.appspot.com"
 };
 
 const firebaseApp = firebase.initializeApp(firebaseConfig);
