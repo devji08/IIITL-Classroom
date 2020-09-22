@@ -29,6 +29,7 @@ export class PostComponent extends Component {
                         title={this.props.isLoading?'':this.props.user.userName[0]}
                         backgroundColor='grey'
                         size='small'
+                        source={this.props.isLoading?null:this.props.user.photoURL==null?null:{uri : this.props.user.photoURL}}
                     />
                     <View style={styles.top_option}>
                         <Text style={styles.userName}>{this.props.isLoading?'...':this.props.user.userName}</Text>
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     container : {
         display:'flex',
         backgroundColor: 'white',
-        marginTop : 15,
+        marginBottom : 15,
     },
     top : {
         display: 'flex',

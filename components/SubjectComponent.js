@@ -13,15 +13,30 @@ const mapDispatchToProps = {
 
 export class Subject extends Component {
 
-    constructor(props){
-        super(props);
+    image(id){
+        switch(id){
+            case 0 :
+                return require('./images/0.jpg');
+            case 1 :
+                return require('./images/1.jpg');
+            case 2 :
+                return require('./images/2.jpg');
+            case 3 :
+                return require('./images/3.jpg');
+            case 4 :
+                return require('./images/4.jpg');
+            default :
+                return require('./images/0.jpg');
+        }
     }
-
     render() {
-        
+        var images = './images/'+this.props.id+'.jpg';
+        var image = './images/4.jpg';
+        console.log(images);
         return (
             <View style={styles.container}>
                 <TouchableOpacity 
+                    activeOpacity = {0.9}
                     onPress = {()=>{this.props.navigate('Feed',{subCode : this.props.subCode, subName : this.props.subName})}}    
                 >
                     <View style={styles.top}>
@@ -31,7 +46,7 @@ export class Subject extends Component {
                     <View style={styles.bottom}>
                         <Image 
                             style={styles.image} 
-                            source={require('./images/book.jpg')}
+                            source={this.image(this.props.id)}
                         />                                                                          
                     </View>
                 </TouchableOpacity>

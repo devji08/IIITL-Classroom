@@ -66,7 +66,7 @@ export const signUpUser = (email, password, userName, goBack) => async dispatch 
             db.collection('users').doc(email).set({
                 email : email,
                 userName : userName,
-                posts : []
+                photoURL : null
             });
         })
         .catch(error => {dispatch(signUpUserError(error.message))});
@@ -224,4 +224,59 @@ export const postUserFetch = (user) => ({
 export const postUserError = (errorMsg) => ({
     type : ActionTypes.FETCH_USER_ERROR,
     payload : errorMsg
+});
+
+export const uploadUserPhoto = (image, email) => async dispatch => {
+    dispatch(addUserPhotoLoading());
+    const fileExt = image.split('.').pop();
+    var fileName = `${email}.${fileExt}`;
+    const response = await fetch(image);
+    const blob = await response.blob();
+    var imageRef = firebase.storage().ref(`users/${fileName}`);
+
+    var uploadTask = imageRef.put(blob);
+        uploadTask.on(
+            firebase.storage.TaskEvent.STATE_CHANGED,
+            snapshot => {
+                console.log('Snapshot : '+snapshot.state);
+                if(snapshot.state === firebase.storage.TaskState.SUCCESS){
+                    console.log("Success");
+                }
+            },
+            error => {
+                dispatch(addUserPhotoErorr(error));
+            },
+            () => {
+                imageRef.getDownloadURL()
+                .then((downloadURL) => {
+                    var user = firebase.auth().currentUser;
+                    user.updateProfile({
+                        photoURL : downloadURL
+                    })
+                    .then(() => {dispatch(addUserPhoto(downloadURL))})
+                    .catch((error) => {dispatch(addUserPhotoErorr(error))});
+                    db.collection('users').doc(email).set({
+                        photoURL : downloadURL
+                    }, {merge : true});
+                })
+                .catch(error => {
+                    dispatch(addUserPhotoErorr(error));
+                });
+            }
+        );
+};
+
+export const addUserPhotoLoading = () => ({
+    type : ActionTypes.ADD_USER_PHOTO_LOADING,
+    payload : true
+});
+
+export const addUserPhotoErorr = (error) => ({
+    type : ActionTypes.ADD_USER_PHOTO_ERROR,
+    payload : error
+});
+
+export const addUserPhoto = (image) => ({
+    type : ActionTypes.ADD_USER_PHOTO,
+    payload : image
 });

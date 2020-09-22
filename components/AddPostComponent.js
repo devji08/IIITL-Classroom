@@ -30,7 +30,8 @@ export class AddPostComponent extends Component {
                         size={40}
                         title={this.props.user.displayName[0]}
                         backgroundColor='grey'
-                    />
+                        source={this.props.user.photoURL==null?null:{uri : this.props.user.photoURL}}
+                        />
                     <Input
                         value={this.state.title}
                         onChangeText={(title)=>{this.setState({title})}}
@@ -102,8 +103,6 @@ export class AddPostComponent extends Component {
             if (!result.cancelled) {
             this.setState({ image: result.uri });
             }
-
-            console.log(result);
         } catch (E) {
             console.log(E);
         }
@@ -117,6 +116,8 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor:'white',
         alignItems : 'center',
+        borderBottomWidth : 1,
+        borderColor : '#eff2f5',
     },
     addPostTop: {
         display: 'flex',

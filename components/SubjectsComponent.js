@@ -34,13 +34,20 @@ export class Subjects extends Component {
                 return (<Loading/>);
             }
             else{
-                var subs = Object.keys(this.props.subjects);
-                subs.sort();
+                var subss = Object.keys(this.props.subjects);
+                subss.sort();
+                var subs = [];
+                for(var i=0;i<subss.length;i++){
+                    subs.push({
+                        sub : subss[i],
+                        id : i
+                    });
+                }
                 return (
                     <ScrollView style={styles.container}>
                         {
                             subs.map(sub => (
-                                <Subject key={sub} sem={sem+'th semester'} navigate={navigate} subCode={sub} subName={this.props.subjects[sub]}/>
+                                <Subject key={sub.id} id={sub.id} sem={sem+'th semester'} navigate={navigate} subCode={sub.sub} subName={this.props.subjects[sub.sub]}/>
                             ))
                         }
                     </ScrollView>
