@@ -3,7 +3,7 @@ import * as firebase from 'firebase';
 import { ToastAndroid } from 'react-native';
 import db from '../components/firebase.js';
 
-export const loginUser = (email, password, navigate) => async dispatch => {
+export const loginUser = (email, password) => async dispatch => {
     dispatch(addUserLoading());
     firebase
         .auth()
@@ -11,8 +11,6 @@ export const loginUser = (email, password, navigate) => async dispatch => {
         .then(user => {
             if(user.user.emailVerified){
                 dispatch(addUser(user.user));
-                navigate('Authentication');
-                navigate('Subjects');
             }
             else{
                 dispatch(addUserError('Account not Verified'));
@@ -38,7 +36,9 @@ export const addUser = (user) => ({
 
 export const signOutUser = () => async dispatch => {
     firebase.auth().signOut()
-    .then(() => dispatch(removeUser()));
+    .then(() => {
+        dispatch(removeUser());
+    })
 }
 
 export const removeUser = () => ({
@@ -47,7 +47,7 @@ export const removeUser = () => ({
 });
 
 
-export const signUpUser = (email, password, userName, goBack) => async dispatch => {
+export const signUpUser = (email, password, userName, toggleLogin) => async dispatch => {
     dispatch(signUpUserLoading());
     firebase
         .auth()
@@ -60,7 +60,7 @@ export const signUpUser = (email, password, userName, goBack) => async dispatch 
             user.user.sendEmailVerification()
             .then(() => {
                 ToastAndroid.show("Please check your Email and Log-in again",ToastAndroid.LONG);
-                goBack();
+                toggleLogin();
             })
             .catch(error => dispatch(signUpUserError(error.message)));
             db.collection('users').doc(email).set({

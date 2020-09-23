@@ -6,14 +6,13 @@ import { loginUser } from '../redux/ActionCreators.js';
 
 const mapStateToProps = state => {
     return{
-        user : state.authentication.user,
         isLoading : state.authentication.isLoading,
         errormsg : state.authentication.errorMsg
     }
 };
 
 const mapDispatchToProps = dispatch => ({
-    loginUser: (email, password, navigate) => dispatch(loginUser(email, password, navigate)),
+    loginUser: (email, password) => dispatch(loginUser(email, password)),
 });
 
 class Login extends Component {
@@ -27,7 +26,6 @@ class Login extends Component {
     }
    
     render() {
-        const {navigate} = this.props.navigation;
         return(
             <View style = {styles.container}>
                 <Input
@@ -63,7 +61,7 @@ class Login extends Component {
                     title = "Login"
                     loading = {this.props.isLoading}
                     onPress = {() => {
-                        this.props.loginUser(this.state.email, this.state.password, navigate);
+                        this.props.loginUser(this.state.email, this.state.password);
                     }}
                 />
                 <Text style={styles.label}>
@@ -72,7 +70,7 @@ class Login extends Component {
                 <Button
                     buttonStyle = {{marginTop:10, marginBottom:10, borderRadius:10, backgroundColor:'#32ad32'}}
                     title = "Signup"
-                    onPress = {() => navigate('Signup')}
+                    onPress = {() => this.props.toggleLogin()}
                 />
             </View>
         );

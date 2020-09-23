@@ -30,9 +30,6 @@ export class Subject extends Component {
         }
     }
     render() {
-        var images = './images/'+this.props.id+'.jpg';
-        var image = './images/4.jpg';
-        console.log(images);
         return (
             <View style={styles.container}>
                 <TouchableOpacity 

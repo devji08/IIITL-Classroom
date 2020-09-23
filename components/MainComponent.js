@@ -1,187 +1,146 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { StyleSheet } from 'react-native';
 import { Icon, Button } from 'react-native-elements';
-import Login from './LoginComponent.js';
-import SignUp from './SignupComponent.js';
 import UserProfile from './ProfileComponent.js';
 import Subjects from './SubjectsComponent.js';
 import Feed from './FeedComponent.js';
 import Authentication from './AuthenticationComponent.js';
+import { connect } from 'react-redux';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 
-const LoginNavigator = createStackNavigator();
+const mapStateToProps = state => {
+  return{
+      user: state.authentication.user
+  }
+};
 
-function LoginNavigatorScreen(){
-  return(
-    <LoginNavigator.Navigator
-      initialRouteName = 'Authentication'
-    >
-      <LoginNavigator.Screen
-        name = "Login"
-        component = {Login}
-        options = {{headerTitle: 'Log-In'}}
-      />
-      <LoginNavigator.Screen
-        name = "Signup" 
-        component = {SignUp}
-        options = {{headerTitle: "Sign-up"}}
-      />
-      <LoginNavigator.Screen
-        name = "Authentication" 
-        component = {Authentication}
-        options={
-          ({navigation}) => ({
-              headerLeft: () => (
-                <Button
-                type = 'clear'
-                icon={
-                  <Icon
-                    name="menu"
-                    size={30}
-                    color="grey"
-                  />
-                }
-                onPress={() => navigation.toggleDrawer()}
-              />
-              )
-          
-          })
-       }
-      />
-    </LoginNavigator.Navigator>
-  );
-}
+class Main extends Component {
 
-const ProfileNavigator = createStackNavigator();
+  render() {
 
-function ProfileNavigatorScreen() {
-  return(
-    <ProfileNavigator.Navigator
-      initialRouteName="Profile"
-    >
-      <ProfileNavigator.Screen
-        name="Profile"
-        component={UserProfile}
-        options={
-          ({navigation}) => ({
-              headerLeft: () => (
-                <Button
-                type = 'clear'
-                icon={
-                  <Icon
-                    name="menu"
-                    size={30}
-                    color="grey"
-                  />
-                }
-                onPress={() => navigation.toggleDrawer()}
-              />
-              )
-          })
-       }
-      />
-    </ProfileNavigator.Navigator>
-  );
-}
+    const ProfileNavigator = createStackNavigator();
 
-const SubjectsNavigator = createStackNavigator();
-
-function SubjectsNavigatorScreen() {
-  return(
-    <SubjectsNavigator.Navigator
-      initialRouteName='Subjects'
-    >
-      <SubjectsNavigator.Screen
-        name = 'Subjects'
-        component = {Subjects}
-        options = {
-          ({navigation}) => ({
-            headerLeft: () => (
-              <Button
-                type = 'clear'
-                icon = {
-                  <Icon
-                    name = "menu"
-                    size = {30}
-                    color = 'grey'
-                  />
-                }
-                onPress={()=> navigation.toggleDrawer()}
-              />
-            )
-          })
-        }
-      />
-      <SubjectsNavigator.Screen
-        name = 'Feed'
-        component = {Feed}
-      />
-    </SubjectsNavigator.Navigator>
-  );
-}
-
-const MainNavigator = createDrawerNavigator();
-
-function MainNavigatorDrawer() {
-    return(
-        <MainNavigator.Navigator
-          initialRouteName='Authentication'
+    function ProfileNavigatorScreen() {
+      return(
+        <ProfileNavigator.Navigator
+          initialRouteName="Profile"
         >
-          <MainNavigator.Screen
+          <ProfileNavigator.Screen
             name="Profile"
-            component={ProfileNavigatorScreen}
-            options={{
-              drawerIcon: ({tintColor}) => (
-                  <Icon
-                      name='user'
-                      type='font-awesome'
-                      size={24}
-                      color='grey'
+            component={UserProfile}
+            options={
+              ({navigation}) => ({
+                  headerLeft: () => (
+                    <Button
+                    type = 'clear'
+                    icon={
+                      <Icon
+                        name="menu"
+                        size={30}
+                        color="grey"
+                      />
+                    }
+                    onPress={() => navigation.toggleDrawer()}
                   />
-              )
-          }}
+                  )
+              })
+          }
           />
-          <MainNavigator.Screen
+        </ProfileNavigator.Navigator>
+      );
+    }
+
+    const SubjectsNavigator = createStackNavigator();
+
+    function SubjectsNavigatorScreen() {
+      return(
+        <SubjectsNavigator.Navigator
+          initialRouteName='Subjects'
+        >
+          <SubjectsNavigator.Screen
             name = 'Subjects'
-            component = {SubjectsNavigatorScreen}
-            options={{
-              drawerIcon: ({tintColor}) => (
-                  <Icon
-                      name='book'
-                      type='font-awesome'
-                      size={24}
-                      color='grey'
+            component = {Subjects}
+            options = {
+              ({navigation}) => ({
+                headerLeft: () => (
+                  <Button
+                    type = 'clear'
+                    icon = {
+                      <Icon
+                        name = "menu"
+                        size = {30}
+                        color = 'grey'
+                      />
+                    }
+                    onPress={()=> navigation.toggleDrawer()}
                   />
-              )
-          }}
+                )
+              })
+            }
           />
-          <MainNavigator.Screen
-            name="Authentication"
-            component={LoginNavigatorScreen}
-            options={{
-              drawerIcon: ({tintColor}) => (
-                  <Icon
-                      name='sign-in'
-                      type='font-awesome'
-                      size={24}
-                      color='grey'
-                  />
-              )
-          }}
+          <SubjectsNavigator.Screen
+            name = 'Feed'
+            component = {Feed}
           />
-        </MainNavigator.Navigator>
-    );
+        </SubjectsNavigator.Navigator>
+      );
+    }
+
+    const MainNavigator = createDrawerNavigator();
+
+    function MainNavigatorDrawer() {
+        return(
+            <MainNavigator.Navigator
+              initialRouteName='Subjects'
+            >
+              <MainNavigator.Screen
+                name="Profile"
+                component={ProfileNavigatorScreen}
+                options={{
+                  drawerIcon: ({tintColor}) => (
+                      <Icon
+                          name='user'
+                          type='font-awesome'
+                          size={24}
+                          color='grey'
+                      />
+                  )
+              }}
+              />
+              <MainNavigator.Screen
+                name = 'Subjects'
+                component = {SubjectsNavigatorScreen}
+                options={{
+                  drawerIcon: ({tintColor}) => (
+                      <Icon
+                          name='book'
+                          type='font-awesome'
+                          size={24}
+                          color='grey'
+                      />
+                  )
+              }}
+              />
+            </MainNavigator.Navigator>
+        );
+    }
+
+    if(this.props.user!=null){
+      return (
+        <NavigationContainer>
+          <MainNavigatorDrawer/>
+        </NavigationContainer>
+      );
+    }
+    else{
+      return <Authentication/>
+    }
+  }
 }
 
-export default function Main() {
-  return (
-    <NavigationContainer>
-      <MainNavigatorDrawer/>
-    </NavigationContainer>
-  );
-}
+export default connect(mapStateToProps)(Main);
 
 const styles= StyleSheet.create({
   icon: {

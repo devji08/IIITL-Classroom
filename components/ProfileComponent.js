@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
-import {Text, Avatar, Accessory} from 'react-native-elements';
+import { View, StyleSheet } from 'react-native';
+import {Text, Avatar, Accessory, Icon, Button, Overlay} from 'react-native-elements';
 import { connect } from 'react-redux';
 import DefaultComponent from './DefaultComponent.js';
 import { uploadUserPhoto } from '../redux/ActionCreators.js';
 import * as Permissions from 'expo-permissions'
 import * as ImagePicker from 'expo-image-picker'
 import { fetchPost } from '../redux/ActionCreators';
+import { signOutUser } from '../redux/ActionCreators.js';
 import PostComponent from './PostComponent.js';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 const mapStateToProps = state => {
     return{
@@ -21,11 +22,16 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
     uploadUserPhoto : (image, email) => dispatch(uploadUserPhoto(image, email)),
+    signOutUser: (navigate) => dispatch(signOutUser(navigate)),
     fetchPost : () => dispatch(fetchPost()),    
 });
 
 
 class UserProfile extends Component {
+
+    state={
+        overlayVisible : false
+    };
 
     image = () => {
         if(this.props.isLoading)return require('./images/loading.gif');
@@ -36,7 +42,30 @@ class UserProfile extends Component {
     };
 
     render() {
-        const {navigate} = this.props.navigation;
+        const navigation = this.props.navigation;
+        const navigate = navigation.navigate;
+
+        const toggleOverlay = () => {
+            this.setState({overlayVisible : !this.state.overlayVisible});
+        };
+
+        navigation.setOptions({
+            headerRight: () => (
+                <Button
+                  type = 'clear'
+                  icon = {
+                    <Icon
+                      type = 'font-awesome'
+                      name = 'ellipsis-v'
+                      size = {20}
+                      color = 'grey'
+                      style = {{marginHorizontal:10}}
+                    />
+                  }
+                  onPress = {() => toggleOverlay()}
+                />
+              )
+        });
         if(this.props.user != null){
             if(this.props.posts.length == 0) this.props.fetchPost();
             var posts = [];
@@ -47,6 +76,29 @@ class UserProfile extends Component {
             }
             return(
                 <ScrollView>
+                    <Overlay 
+                        isVisible={this.state.overlayVisible} 
+                        onBackdropPress={toggleOverlay}
+                        backdropStyle = {{opacity : 0}}
+                        overlayStyle = {{
+                            alignSelf: 'flex-end',
+                            position : 'absolute',
+                            top : 0,
+                            padding : 0
+                        }}
+                        children = {
+                            <Button
+                                buttonStyle={{padding:17, backgroundColor:'#ccc'}}
+                                type = 'clear'
+                                onPress = {()=>{
+                                    toggleOverlay();
+                                    this.props.signOutUser(navigate);
+                                }}
+                                title = 'Sign Out'
+                                titleStyle = {{color:'black'}}
+                            />
+                        }    
+                    />
                     <View style={styles.container}>
                         <View style={styles.avatar}>
                             <Avatar

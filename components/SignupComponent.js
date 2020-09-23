@@ -12,7 +12,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    signUpUser : (email, password, userName, goBack) => dispatch(signUpUser(email, password, userName, goBack)),
+    signUpUser : (email, password, userName) => dispatch(signUpUser(email, password, userName)),
     signUpUserError : (error) => dispatch(signUpUserError(error))
 });
 
@@ -37,7 +37,7 @@ class SignUp extends Component {
         })
     }
     
-    handleSignup(userName, email, password, cpassword, goBack) {
+    handleSignup(userName, email, password, cpassword, toggleLogin) {
         if(password != cpassword){
             this.setState({
                 password:'',
@@ -55,12 +55,12 @@ class SignUp extends Component {
             this.props.signUpUserError('Use you official E-mail !');
         }
         else{
-            this.props.signUpUser(email, password, userName, goBack);
+            this.props.signUpUser(email, password, userName, toggleLogin);
         }
     }
 
     render() {
-        const { goBack } = this.props.navigation;
+        const toggleLogin = this.props.toggleLogin;
         return(
             <View style = {styles.container}>
                 <Input
@@ -120,7 +120,12 @@ class SignUp extends Component {
                     buttonStyle = {styles.button}
                     title = "Signup"
                     loading = {this.props.isLoading}
-                    onPress = {() => this.handleSignup(this.state.username, this.state.email, this.state.password, this.state.cpassword, goBack)}
+                    onPress = {() => this.handleSignup(this.state.username, this.state.email, this.state.password, this.state.cpassword, toggleLogin)}
+                />
+                <Button
+                    buttonStyle = {{marginTop:10, marginBottom:10, borderRadius:10, backgroundColor:'#32ad32'}}
+                    title = "Login"
+                    onPress = {() => this.props.toggleLogin()}
                 />
             </View>
         );
