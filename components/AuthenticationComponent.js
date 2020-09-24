@@ -14,7 +14,6 @@ class Authentication extends Component {
         const toggleLogin = () => {
             this.setState({login : !this.state.login})
         }
-
         return (
             <View style={styles.container}>
                 {

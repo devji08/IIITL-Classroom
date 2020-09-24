@@ -186,8 +186,7 @@ export const fetchPost = () => async dispatch => {
             posts.push(doc.data());
         });
         dispatch(feedFetch(posts));
-    })
-    .catch(error => {
+    }, function (error) {
         dispatch(feedError(error))
     });
 };
@@ -203,13 +202,10 @@ export const feedError = (errorMsg) => ({
 });
 
 export const fetchPostUser = (email) => async dispatch => {
-    console.log("fetchPostUser");
-    console.log(email);
     db.collection("users").doc(email)
-    .onSnapshot(function(doc) {
-        var user = doc.data();
-        dispatch(postUserFetch(user));
-        console.log("Done");
+    .get()
+    .then(doc => {
+        dispatch(postUserFetch(doc.data()));
     })
     .catch(error => {
         dispatch(postUserError(error))

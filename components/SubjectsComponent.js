@@ -4,8 +4,8 @@ import Subject from './SubjectComponent.js';
 import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { fetchSubject } from '../redux/ActionCreators.js';
+import { fetchPost } from '../redux/ActionCreators';
 import { Loading } from './loadingComponent.js';
-import DefaultComponent from './DefaultComponent.js';
 
 const mapStateToProps = (state) => {
     return {
@@ -17,6 +17,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => ({
     fetchSubject : (sem) => dispatch(fetchSubject(sem)),
+    fetchPost : () => dispatch(fetchPost()),
 });
 
 
@@ -24,41 +25,39 @@ export class Subjects extends Component {
 
     render() {
         const {navigate} = this.props.navigation;
-        if(this.props.user!=null){
-            var year  = parseInt(this.props.user.email.substring(3,7));
-            var currentDate = new Date();
-            var addmissionDate = new Date(year, 7, 1);
-            var sem = Math.ceil((currentDate - addmissionDate)/(1000*60*60*24*30*6));
-            if(this.props.subjects == null) this.props.fetchSubject(sem);
-            if(this.props.isLoading){
-                return (<Loading/>);
-            }
-            else{
-                var subss = Object.keys(this.props.subjects);
-                subss.sort();
-                var subs = [];
-                for(var i=0;i<subss.length;i++){
-                    subs.push({
-                        sub : subss[i],
-                        id : i
-                    });
-                }
-                return (
-                    <ScrollView style={styles.container}>
-                        {
-                            subs.map(sub => (
-                                <Subject key={sub.id} id={sub.id} sem={sem+'th semester'} navigate={navigate} subCode={sub.sub} subName={this.props.subjects[sub.sub]}/>
-                            ))
-                        }
-                    </ScrollView>
-                )
-            }
+        var year  = parseInt(this.props.user.email.substring(3,7));
+        var currentDate = new Date();
+        var addmissionDate = new Date(year, 7, 1);
+        var sem = Math.ceil((currentDate - addmissionDate)/(1000*60*60*24*30*6));
+
+        if(this.props.subjects == null){
+            this.props.fetchSubject(sem);
+            this.props.fetchPost();
+        }
+
+        if(this.props.isLoading){
+            return (<Loading/>);
         }
         else{
-            return(
-                <DefaultComponent navigate={navigate}/>
-            );
-        }
+            var subss = Object.keys(this.props.subjects);
+            subss.sort();
+            var subs = [];
+            for(var i=0;i<subss.length;i++){
+                subs.push({
+                    sub : subss[i],
+                    id : i
+                });
+            }
+            return (
+                <ScrollView style={styles.container}>
+                    {
+                        subs.map(sub => (
+                            <Subject key={sub.id} id={sub.id} sem={sem+'th semester'} navigate={navigate} subCode={sub.sub} subName={this.props.subjects[sub.sub]}/>
+                        ))
+                    }
+                </ScrollView>
+            )
+        }       
     }
 }
 

@@ -1,15 +1,6 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import { View, StyleSheet, Text, Image } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
-const mapStateToProps = (state) => ({
-
-})
-
-const mapDispatchToProps = {
-    
-}
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 export class Subject extends Component {
 
@@ -78,4 +69,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Subject)
+export default Subject;
