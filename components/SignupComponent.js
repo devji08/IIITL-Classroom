@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Input, Icon, Text } from 'react-native-elements';
+import { View, StyleSheet, Text } from 'react-native';
+import { Button, Input, Icon, Avatar } from 'react-native-elements';
 import { signUpUser, signUpUserError } from '../redux/ActionCreators.js';
 import { connect } from 'react-redux';
 
@@ -12,21 +12,18 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    signUpUser : (email, password, userName) => dispatch(signUpUser(email, password, userName)),
+    signUpUser : (email, password, userName, toggleLogin) => dispatch(signUpUser(email, password, userName, toggleLogin)),
     signUpUserError : (error) => dispatch(signUpUserError(error))
 });
 
 class SignUp extends Component {
 
-    constructor(props){
-        super(props);
-        this.state={
-            email: '',
-            password: '',
-            cpassword: '',
-            username: ''
-        }
-    }
+    state={
+        email: '',
+        password: '',
+        cpassword: '',
+        username: ''
+    };
 
     clearState() {
         this.setState({
@@ -45,12 +42,11 @@ class SignUp extends Component {
             });
             this.props.signUpUserError('Password missmatch !');
         }
-        else if(email.substring(9,15)!='@iiitl'){
+        else if(email.substring(10,16)!='@iiitl'){
             this.setState({
                 password:'',
                 cpassword:'',
                 email : '',
-                userName : ''
             });
             this.props.signUpUserError('Use you official E-mail !');
         }
@@ -63,6 +59,13 @@ class SignUp extends Component {
         const toggleLogin = this.props.toggleLogin;
         return(
             <View style = {styles.container}>
+                 <View style={styles.avatar}>
+                    <Avatar
+                        size = 'xlarge'
+                        source={require('./images/IIITL_logo.png')}
+                    />
+                </View>
+                <Text style={styles.welcome}>WELCOME</Text>
                 <Input
                     placeholder = "Full Name"
                     value = {this.state.username}
@@ -72,6 +75,7 @@ class SignUp extends Component {
                             type = "font-awesome"
                             name = "user"
                             size = {15}
+                            color = 'grey'
                         />
                     }
                 />
@@ -84,6 +88,7 @@ class SignUp extends Component {
                             type = "font-awesome"
                             name = "user"
                             size = {15}
+                            color = 'grey'
                         />
                     }
                 />
@@ -97,6 +102,7 @@ class SignUp extends Component {
                             type = "font-awesome"
                             name = "lock"
                             size = {15}
+                            color = 'grey'
                         />
                     }    
                 />
@@ -110,22 +116,23 @@ class SignUp extends Component {
                             type = "font-awesome"
                             name = "lock"
                             size = {15}
+                            color = 'grey'
                         />
-                    }    
+                    }
+                    errorMessage = {this.props.errorMsg}
                 />
-                <Text style={styles.errorLabel}>
-                    {this.props.errorMsg}
+                <Text
+                    style={styles.label}
+                    onPress = {() => this.props.toggleLogin()}
+                >
+                    Login?
                 </Text>
                 <Button
                     buttonStyle = {styles.button}
-                    title = "Signup"
+                    title = "SIGNUP"
+                    titleStyle={{fontWeight : 'bold'}}
                     loading = {this.props.isLoading}
                     onPress = {() => this.handleSignup(this.state.username, this.state.email, this.state.password, this.state.cpassword, toggleLogin)}
-                />
-                <Button
-                    buttonStyle = {{marginTop:10, marginBottom:10, borderRadius:10, backgroundColor:'#32ad32'}}
-                    title = "Login"
-                    onPress = {() => this.props.toggleLogin()}
                 />
             </View>
         );
@@ -140,13 +147,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 15
     },
-    errorLabel: {
-        color: 'red',
-        marginRight: 10,
-        marginLeft: 10,
+    avatar : {
+        alignSelf:'center'
+    },
+    welcome : {
+        alignSelf : 'center',
+        padding : 20,
+        fontSize : 30,
+        fontWeight : 'bold'
+    },
+    label: {
+        color: 'grey',
+        fontSize : 15,
+        alignSelf : 'flex-end',
+        paddingBottom : 10
     },
     button :{
-        borderRadius: 10,
+        borderRadius: 999,
         marginBottom: 10,
         marginTop: 10,
     }

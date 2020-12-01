@@ -20,6 +20,7 @@ export class Feed extends Component {
 
     render() {
         const navigation = this.props.navigation;
+
         navigation.setOptions({title : this.state.subName});
         if(this.props.isLoading){
             return (
@@ -41,7 +42,7 @@ export class Feed extends Component {
                     <View style={styles.container}>
                         <AddpostComponent subCode={this.state.subCode}/>
                         {
-                            posts.map(post => (<PostComponent key={post.id} post={post}/>))
+                            posts.map(post => (<PostComponent key={post.id} post={post} commentFunction = {() => navigation.navigate('PostDetail', {postid : post.id})}/>))
                         }
                     </View>
                 </ScrollView>

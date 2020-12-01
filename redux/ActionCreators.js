@@ -38,6 +38,7 @@ export const signOutUser = () => async dispatch => {
     firebase.auth().signOut()
     .then(() => {
         dispatch(removeUser());
+        dispatch(subjectFetch(null));
     })
 }
 
@@ -138,7 +139,9 @@ export const addPost = (email, title, image, subCode) => async dispatch => {
                         image : downloadURL,
                         subCode : subCode,
                         timeStamp : firebase.firestore.FieldValue.serverTimestamp(),
-                        date : new Date()
+                        date : new Date(),
+                        likes : [],
+                        comments : []
                     });
                     dispatch(addPostDone());
                 })
@@ -151,6 +154,8 @@ export const addPost = (email, title, image, subCode) => async dispatch => {
     else{
         postRef.set({
             id : id,
+            likes : [],
+            comments : [],
             user : email,
             title : title,
             image : image,
@@ -201,26 +206,6 @@ export const feedError = (errorMsg) => ({
     payload : errorMsg
 });
 
-export const fetchPostUser = (email) => async dispatch => {
-    db.collection("users").doc(email)
-    .get()
-    .then(doc => {
-        dispatch(postUserFetch(doc.data()));
-    })
-    .catch(error => {
-        dispatch(postUserError(error))
-    });
-};
-
-export const postUserFetch = (user) => ({
-    type : ActionTypes.FETCH_USER,
-    payload : user
-});
-
-export const postUserError = (errorMsg) => ({
-    type : ActionTypes.FETCH_USER_ERROR,
-    payload : errorMsg
-});
 
 export const uploadUserPhoto = (image, email) => async dispatch => {
     dispatch(addUserPhotoLoading());
@@ -276,3 +261,4 @@ export const addUserPhoto = (image) => ({
     type : ActionTypes.ADD_USER_PHOTO,
     payload : image
 });
+

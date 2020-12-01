@@ -68,7 +68,7 @@ export class AddPostComponent extends Component {
                                 />
                             }
                             onPress = {() => {
-                                    this.props.addPost(this.props.user.email, this.state.title, this.state.image, this.props.subCode);
+                                    if(this.state.title != null)this.props.addPost(this.props.user.email, this.state.title, this.state.image, this.props.subCode);
                                     this.setState({title:null, image:null});
                                 }
                             }

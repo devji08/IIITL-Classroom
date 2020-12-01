@@ -17,7 +17,7 @@ export class Subject extends Component {
             case 4 :
                 return require('./images/4.jpg');
             default :
-                return require('./images/0.jpg');
+                return require('./images/3.jpg');
         }
     }
     render() {

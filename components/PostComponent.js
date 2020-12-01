@@ -1,39 +1,71 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet } from 'react-native';
 import { Avatar, Image, Button, Icon } from 'react-native-elements';
-import { connect } from 'react-redux'
-import { fetchPostUser } from '../redux/ActionCreators.js'
+import { connect } from 'react-redux';
+import db from './firebase.js'
 
-const mapStateToProps = (state) => ({
-    user : state.postDetailReducer.user,
-    isLoading : state.postDetailReducer.isLoading,
-    errorMsg : state.postDetailReducer.errorMsg,
-})
-
-const mapDispatchToProps = dispatch => ({
-    fetchPostUser : (email) => dispatch(fetchPostUser(email)),
-});
-
-export class PostComponent extends Component {
-    state = {
-        like : false,
+const mapStateToProps = (state) => {
+    return {
+        uname : state.authentication.user.email,
+        posts : state.feedReducer.posts
     }
+};
+
+class PostComponent extends Component {
+    
+    state = {
+        user : null,
+        date : '...',
+        error : null
+    }
+
+    componentDidMount() {
+
+        var d = new Date(this.props.post.date.seconds * 1000);
+        var date = (d.toDateString().substring(0,10));
+
+        db.collection("users").doc(this.props.post.user)
+        .onSnapshot(doc => {
+            this.setState({
+                user : doc.data(),
+                date : date
+            });
+        }, error => {
+            this.setState({error : error});
+
+        });
+    }
+
     render() {
-        if(this.props.user == null) this.props.fetchPostUser(this.props.post.user);
-        var date = this.props.post.date.toDate().toString().substring(4,15);
-        return (
+        var post = this.props.posts.filter(post => post.id == this.props.post.id)[0];
+        var like = post.likes.filter(user => this.props.uname == user).length;
+        const likePost = () => {
+            var likes = post.likes;
+            if(like == 0) likes.push(this.props.uname);
+            else{
+                for( var i = 0; i < likes.length; i++){                   
+                    if ( likes[i] === this.props.uname) { 
+                        likes.splice(i, 1); 
+                        i--; 
+                    }
+                }
+            }
+            db.collection("posts").doc(this.props.post.id).set({likes:likes},{merge : true});
+        };
+
+        return (            
             <View style={styles.container}>
                 <View style={styles.top}>
                     <Avatar
                         rounded
-                        title={this.props.isLoading?'':this.props.user.userName[0]}
+                        title={this.state.user==null?'':this.state.user.userName[0]}
                         backgroundColor='grey'
                         size='small'
-                        source={this.props.isLoading?null:this.props.user.photoURL==null?null:{uri : this.props.user.photoURL}}
+                        source={this.state.user==null?null:this.state.user.photoURL==null?null:{uri : this.state.user.photoURL}}
                     />
                     <View style={styles.top_option}>
-                        <Text style={styles.userName}>{this.props.isLoading?'...':this.props.user.userName}</Text>
-                        <Text style = {styles.timestamp}>{date}</Text>
+                        <Text style={styles.userName}>{this.state.user==null?'...':this.state.user.userName}</Text>
+                        <Text style = {styles.timestamp}>{this.state.date}</Text>
                     </View>
                 </View>
                 <View style={styles.middle}>
@@ -50,12 +82,14 @@ export class PostComponent extends Component {
                             icon={
                                 <Icon
                                     type='font-awesome'
-                                    name={this.state.like?'thumbs-up':'thumbs-o-up'}
-                                    color={this.state.like?'#4a88d4':'grey'}
+                                    name={like == 1?'thumbs-up':'thumbs-o-up'}
+                                    color={like == 1?'#4a88d4':'grey'}
                                 />
                             }
-                            onPress = { () => {this.setState({like : !this.state.like})}}
-                        /> 
+                            onPress = {likePost}
+                            title = {this.props.post.likes.length}
+                            titleStyle = {{color : 'grey', paddingLeft : 10}}
+                        />
                     </View>
                     <View style={styles.options}>
                         <Button 
@@ -68,6 +102,9 @@ export class PostComponent extends Component {
                                     size={20}
                                 />
                             }
+                            onPress = { this.props.commentFunction }
+                            title = "Comment"
+                            titleStyle = {{color : 'grey', paddingLeft : 10, fontSize : 14}}
                         /> 
                     </View>
                 </View>
@@ -126,4 +163,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PostComponent)
+export default connect(mapStateToProps)(PostComponent);

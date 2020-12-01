@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { Button, Input, Icon } from 'react-native-elements';
+import { Button, Input, Icon, Avatar } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { loginUser } from '../redux/ActionCreators.js';
 
@@ -17,19 +17,23 @@ const mapDispatchToProps = dispatch => ({
 
 class Login extends Component {
 
-    constructor(props){
-        super(props);
-        this.state={
-            email: '',
-            password: ''
-        }
-    }
+    state = {
+        email: '',
+        password: ''
+    };
    
     render() {
         return(
             <View style = {styles.container}>
+                <View style={styles.avatar}>
+                    <Avatar
+                        size = 'xlarge'
+                        source={require('./images/IIITL_logo.png')}
+                    />
+                </View>
+                <Text style={styles.welcome}>WELCOME</Text>
                 <Input
-                    placeholder = "E-mail"
+                    placeholder = "Username"
                     value = {this.state.email}
                     onChangeText = {(email) => {this.setState({email})}}
                     leftIcon = {
@@ -37,6 +41,7 @@ class Login extends Component {
                             type = "font-awesome"
                             name = "user"
                             size = {15}
+                            color ='grey'
                         />
                     }
                 />
@@ -50,27 +55,25 @@ class Login extends Component {
                             type = "font-awesome"
                             name = "lock"
                             size = {15}
+                            color ='grey'
                         />
-                    }    
+                    }   
+                    errorMessage = {this.props.errormsg}
                 />
-                <Text style={styles.errorLabel}>
-                    {this.props.errormsg}
+                <Text 
+                    style={styles.label}
+                    onPress = {() => this.props.toggleLogin()}    
+                >
+                    Signup?
                 </Text>
                 <Button
                     buttonStyle = {styles.button}
-                    title = "Login"
+                    title = "LOGIN"
+                    titleStyle = {{fontWeight : 'bold'}}
                     loading = {this.props.isLoading}
                     onPress = {() => {
                         this.props.loginUser(this.state.email, this.state.password);
                     }}
-                />
-                <Text style={styles.label}>
-                    Don't have a account ?
-                </Text>
-                <Button
-                    buttonStyle = {{marginTop:10, marginBottom:10, borderRadius:10, backgroundColor:'#32ad32'}}
-                    title = "Signup"
-                    onPress = {() => this.props.toggleLogin()}
                 />
             </View>
         );
@@ -85,9 +88,20 @@ const styles = StyleSheet.create({
         padding: 15,
         justifyContent: 'center'
     },
+    avatar : {
+        alignSelf:'center'
+    },
+    welcome : {
+        alignSelf : 'center',
+        padding : 20,
+        fontSize : 30,
+        fontWeight : 'bold'
+    },
     label: {
-        marginLeft: 10,
-        color: 'red'
+        color: 'grey',
+        fontSize : 15,
+        alignSelf : 'flex-end',
+        paddingBottom : 10
     },
     errorLabel: {
         color: 'red',
@@ -95,7 +109,7 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     button :{
-        borderRadius: 10,
+        borderRadius: 999,
         marginBottom: 10,
         marginTop: 10,
     }
