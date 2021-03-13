@@ -14,7 +14,7 @@ A remote learning platform that will be designed to provide learners and educato
 3. run the application by running 'expo start' command
 
 ## Application View
-<table cellspacing="50">
+<table>
   <tr>
     <td>
       <img src="/assets/signup.jpg?raw=true" width="200" height="400">
