@@ -3,11 +3,11 @@
 ## About Project
 A remote learning platform that will be designed to provide learners and educators a single place to have a smart and non generic learning experience. It will be a single, secure integrated system that will aim to make resource management easy.
 
-pre-requisite :
-  expo-cli
-  yarn
+## Pre-requisite :
+  1. expo-cli
+  2. yarn
 
-Steps to run the apllication on your machine:
+### Steps to run the apllication on your machine:
 
 1. clone the respository
 2. go to the repo destination in cmd and run 'yarn' to add all dependencies
@@ -15,4 +15,9 @@ Steps to run the apllication on your machine:
 
 ## Application View
 
-![Alt text](/assets/signup.jpg?raw=true "Optional Title")
+<img src="/assets/signup.jpg?raw=true" width="50" height="100">
+<img src="/assets/login.jpg?raw=true" width="50" height="100">
+<img src="/assets/subjects.jpg?raw=true" width="50" height="100">
+<img src="/assets/feed.jpg?raw=true" width="50" height="100">
+<img src="/assets/assignment.jpg?raw=true" width="50" height="100">
+<img src="/assets/profile.jpg?raw=true" width="50" height="100">
