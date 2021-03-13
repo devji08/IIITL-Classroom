@@ -14,10 +14,29 @@ A remote learning platform that will be designed to provide learners and educato
 3. run the application by running 'expo start' command
 
 ## Application View
-
-<img src="/assets/signup.jpg?raw=true" width="50" height="100">
-<img src="/assets/login.jpg?raw=true" width="50" height="100">
-<img src="/assets/subjects.jpg?raw=true" width="50" height="100">
-<img src="/assets/feed.jpg?raw=true" width="50" height="100">
-<img src="/assets/assignment.jpg?raw=true" width="50" height="100">
-<img src="/assets/profile.jpg?raw=true" width="50" height="100">
+<table>
+  <tr>
+    <td>
+      <img src="/assets/signup.jpg?raw=true" width="100" height="200">
+    </td>
+    <td>
+      <img src="/assets/login.jpg?raw=true" width="100" height="200">
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="/assets/subjects.jpg?raw=true" width="100" height="200">
+    </td>
+    <td>
+      <img src="/assets/feed.jpg?raw=true" width="100" height="200">
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img src="/assets/assignment.jpg?raw=true" width="100" height="200">
+    </td>
+    <td>
+      <img src="/assets/profile.jpg?raw=true" width="100" height="200">
+    </td>
+  </tr>
+</table>
