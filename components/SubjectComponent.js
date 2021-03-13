@@ -28,7 +28,7 @@ export class Subject extends Component {
                     onPress = {()=>{this.props.navigate('Feed',{subCode : this.props.subCode, subName : this.props.subName})}}    
                 >
                     <View style={styles.top}>
-                        <Text>{this.props.subName}</Text>
+                        <Text >{this.props.subName}</Text>
                         <Text>{'B.Tech ('}{this.props.sem}{')'}</Text>
                     </View>
                     <View style={styles.bottom}>

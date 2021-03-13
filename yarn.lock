@@ -1535,6 +1535,24 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/masked-view/-/masked-view-0.1.10.tgz#5dda643e19e587793bc2034dd9bf7398ad43d401"
   integrity sha512-rk4sWFsmtOw8oyx8SD3KSvawwaK7gRBSEIy2TAwURyGt+3TizssXP1r8nx3zY+R7v2vYYHXZ+k2/GULAT/bcaQ==
 
+"@react-native-community/progress-bar-android@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@react-native-community/progress-bar-android/-/progress-bar-android-1.0.4.tgz#2601353b23a7ad76a59e5b0981e0b08c39902708"
+  integrity sha512-O7UCpXDXlpxIx2eusj6bc8noJ5KyXZjnad0NQig9myq6iV4D9uGVziSj6J2v46dTnMd9iTX60szBu1LvsUO6rg==
+
+"@react-native-community/progress-view@^1.0.3", "@react-native-community/progress-view@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@react-native-community/progress-view/-/progress-view-1.2.4.tgz#2293e8a683144a788a926e0ed19cbc5eb9c1192f"
+  integrity sha512-NTraRANHf51S1hXePh1CZTn35LmkHJYi1en0fTWIoFbuGOEGIYg3/Vpm6ccqigQt9+Np3l7Qu/WfAEqjOn6udQ==
+
+"@react-navigation/bottom-tabs@^5.11.8":
+  version "5.11.8"
+  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-5.11.8.tgz#0af8d5859b1ad781bdd86e8236ceaed60dc355fe"
+  integrity sha512-/0AiP+QPGKe35NdGxSjq0XpZjYvURy8H2E4rZMRHJ+fUoq+cX0ze/XQeQ8IHMpoc568ZwOGRgdUToUGZEDMpvA==
+  dependencies:
+    color "^3.1.3"
+    react-native-iphone-x-helper "^1.3.0"
+
 "@react-navigation/core@^5.12.3":
   version "5.12.3"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-5.12.3.tgz#0484fcca290569a0dc10b70b99f00edd3f1fd93c"
@@ -2020,6 +2038,11 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
+base-64@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
+  integrity sha1-eAqZyE59YAJgNhURxId2E78k9rs=
+
 base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.0:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.3.1.tgz#58ece8cb75dd07e71ed08c736abc5fac4dbf8df1"
@@ -2326,6 +2349,14 @@ color-string@^1.5.2, color-string@^1.5.3:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
+color-string@^1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/color-string/-/color-string-1.5.4.tgz#dd51cd25cfee953d138fe4002372cc3d0e504cb6"
+  integrity sha512-57yF5yt8Xa3czSEW1jfQDE79Idk0+AkN/4KWad6tbdxUmAs3MvjxlWSWD4deYytcRfoZ9nhKyFl1kj5tBvidbw==
+  dependencies:
+    color-name "^1.0.0"
+    simple-swizzle "^0.2.2"
+
 color-support@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/color-support/-/color-support-1.1.3.tgz#93834379a1cc9a0c61f82f52f0d04322251bd5a2"
@@ -2338,6 +2369,14 @@ color@^3.1.0, color@^3.1.2:
   dependencies:
     color-convert "^1.9.1"
     color-string "^1.5.2"
+
+color@^3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/color/-/color-3.1.3.tgz#ca67fb4e7b97d611dcde39eceed422067d91596e"
+  integrity sha512-xgXAcTHa2HeFCGLE9Xs/R82hujGtu9Jd9x4NW3T34+OMs7VoPsjwzRczKHvTAHeJwWFwX5j15+MgAppE8ztObQ==
+  dependencies:
+    color-convert "^1.9.1"
+    color-string "^1.5.4"
 
 colorette@^1.0.7:
   version "1.2.1"
@@ -2502,6 +2541,11 @@ cross-spawn@^6.0.0, cross-spawn@^6.0.5:
     semver "^5.5.0"
     shebang-command "^1.2.0"
     which "^1.2.9"
+
+crypto-js@^3.2.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-3.3.0.tgz#846dd1cce2f68aacfa156c8578f926a609b7976b"
+  integrity sha512-DIT51nX0dCfKltpRiXV+/TVZq+Qq2NgF4644+K7Ttnla7zEzqc+kjJyiB96BHNyUTBxyjzRcZYpUdZa+QAqi6Q==
 
 css-in-js-utils@^2.0.0:
   version "2.0.1"
@@ -2780,6 +2824,11 @@ escape-html@~1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/escape-html/-/escape-html-1.0.3.tgz#0258eae4d3d0c0974de1c169188ef0051d1d1988"
   integrity sha1-Aljq5NPQwJdN4cFpGI7wBR0dGYg=
+
+escape-string-regexp@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-2.0.0.tgz#a30304e99daa32e23b2fd20f51babd07cffca344"
+  integrity sha512-UpzcLCXolUWcNu5HtVMHYdXJjArjsF9C0aNnquZYY4uW/Vu0miy5YoWvbV345HauVvcAUnpRuhMMcqTcGOY2+w==
 
 escape-string-regexp@^1.0.5:
   version "1.0.5"
@@ -3345,6 +3394,18 @@ get-value@^2.0.3, get-value@^2.0.6:
   resolved "https://registry.yarnpkg.com/get-value/-/get-value-2.0.6.tgz#dc15ca1c672387ca76bd37ac0a395ba2042a2c28"
   integrity sha1-3BXKHGcjh8p2vTesCjlbogQqLCg=
 
+glob@7.0.6:
+  version "7.0.6"
+  resolved "https://registry.yarnpkg.com/glob/-/glob-7.0.6.tgz#211bafaf49e525b8cd93260d14ab136152b3f57a"
+  integrity sha1-IRuvr0nlJbjNkyYNFKsTYVKz9Xo=
+  dependencies:
+    fs.realpath "^1.0.0"
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "^3.0.2"
+    once "^1.3.0"
+    path-is-absolute "^1.0.0"
+
 glob@^7.1.2, glob@^7.1.3:
   version "7.1.6"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.6.tgz#141f33b81a7c2492e125594307480c46679278a6"
@@ -3582,7 +3643,7 @@ inquirer@^3.0.6:
     strip-ansi "^4.0.0"
     through "^2.3.6"
 
-invariant@^2.2.2, invariant@^2.2.4:
+invariant@2.2.4, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -4539,7 +4600,7 @@ mimic-fn@^1.0.0:
   resolved "https://registry.yarnpkg.com/mimic-fn/-/mimic-fn-1.2.0.tgz#820c86a39334640e99516928bd03fca88057d022"
   integrity sha512-jf84uxzwiuiIVKiOLpfYk7N46TSy8ubTonmneY9vrpHNAnp0QBt2BxWV9dO3/j+BoVAb+a5G6YDPW3M5HOdMWQ==
 
-minimatch@^3.0.4:
+minimatch@^3.0.2, minimatch@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.4.tgz#5166e286457f03306064be5497e8dbb0c3d32083"
   integrity sha512-yJHVQEhyqPLUTgt9B83PXu6W3rx4MvvHvSUvToogpwoGDOUQ+yDrR0HRot+yOCdCO7u4hX3pWft6kWBBcqh0UA==
@@ -5108,11 +5169,6 @@ react-dom@~16.11.0:
     prop-types "^15.6.2"
     scheduler "^0.17.0"
 
-react-flip-move@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/react-flip-move/-/react-flip-move-3.0.4.tgz#261f66101fbc305f9b7b28959c5cf8236413ca74"
-  integrity sha512-HyUVv9g3t/BS7Yz9HgrtYSWyRNdR2F81nkj+C5iRY675AwlqCLB5JU9mnZWg0cdVz7IM4iquoyZx70vzZv3Z8Q==
-
 react-is@^16.12.0, react-is@^16.13.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-is@^16.9.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
@@ -5126,6 +5182,13 @@ react-native-appearance@~0.3.3:
     fbemitter "^2.1.1"
     invariant "^2.2.4"
     use-subscription "^1.0.0"
+
+react-native-dropdown-menu@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-dropdown-menu/-/react-native-dropdown-menu-2.0.0.tgz#1d9e6614dc3799b79e3151f8a54fb2d83c7d899f"
+  integrity sha1-HZ5mFNw3mbeeMVH4pU+y2Dx9iZ8=
+  dependencies:
+    prop-types "^15.6.1"
 
 react-native-elements@^2.3.2:
   version "2.3.2"
@@ -5156,6 +5219,21 @@ react-native-iphone-x-helper@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
   integrity sha512-/VbpIEp8tSNNHIvstuA3Swx610whci1Zpc9mqNkqn14DkMbw+ORviln2u0XyHG1kPvvwTNGZY6QpeFwxYaSdbQ==
+
+react-native-iphone-x-helper@^1.3.0:
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
+  integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
+
+react-native-pdf@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-pdf/-/react-native-pdf-6.3.0.tgz#17bf7381904ae3a45d4800679c744d3e02457c60"
+  integrity sha512-iT2GTRw6tMoCO4vRYKwIyXnhQ+XPW8trK+YlbMpsnF8dx2n7ssSdcutuIDnDvZ/fM3CqKJizVSQMWbyOd4O2+w==
+  dependencies:
+    "@react-native-community/progress-bar-android" "^1.0.4"
+    "@react-native-community/progress-view" "^1.0.3"
+    crypto-js "^3.2.0"
+    prop-types "^15.7.2"
 
 react-native-ratings@^7.2.0:
   version "7.3.0"
@@ -5216,6 +5294,14 @@ react-native-web@~0.11.7:
     normalize-css-color "^1.0.2"
     prop-types "^15.6.0"
     react-timer-mixin "^0.13.4"
+
+react-native-webview@^11.2.3:
+  version "11.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-webview/-/react-native-webview-11.2.3.tgz#1b82685ab60645d4161f2e25e98286493cdffa5d"
+  integrity sha512-r/K+Lf/O5aij72gRndMX2qsyQ/WLtDPiO75SS57y6JjqSKxedGASVL9Jwl1TM7fCXqUq8dgiwik/LuBHbJXAEg==
+  dependencies:
+    escape-string-regexp "2.0.0"
+    invariant "2.2.4"
 
 "react-native@https://github.com/expo/react-native/archive/sdk-38.0.2.tar.gz":
   version "0.62.2"
@@ -5460,6 +5546,13 @@ rimraf@~2.2.6:
   version "2.2.8"
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz#e439be2aaee327321952730f99a8929e4fc50582"
   integrity sha1-5Dm+Kq7jJzIZUnMPmaiSnk/FBYI=
+
+"rn-fetch-blob@github:joltup/rn-fetch-blob#pull/701/head":
+  version "0.12.0"
+  resolved "https://codeload.github.com/joltup/rn-fetch-blob/tar.gz/7926c9d56b0f1df3459b9dd6efb0438122245e59"
+  dependencies:
+    base-64 "0.1.0"
+    glob "7.0.6"
 
 rsvp@^4.8.4:
   version "4.8.5"

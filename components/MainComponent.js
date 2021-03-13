@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
+
 import PostDetailComponent  from './PostDetailComponent.js';
 
 const mapStateToProps = state => {
@@ -53,6 +54,7 @@ class Main extends Component {
       );
     }
 
+  
     const SubjectsNavigator = createStackNavigator();
 
     function SubjectsNavigatorScreen() {

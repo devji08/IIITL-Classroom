@@ -30,13 +30,13 @@ class CommentComponent extends Component {
                 <View style={styles.top}>
                     <Avatar
                         rounded
-                        title={this.state.user==null?'':this.state.user.userName[0]}
+                        title={this.state.user==null?'':this.state.user.displayName[0]}
                         backgroundColor='grey'
                         size={20}
                         source={this.state.user==null?null:this.state.user.photoURL==null?null:{uri : this.state.user.photoURL}}
                     />
                     <View style={styles.top_option}>
-                        <Text style={styles.userName}>{this.state.user==null?'...':this.state.user.userName}</Text>
+                        <Text style={styles.userName}>{this.state.user==null?'...':this.state.user.displayName}</Text>
                     </View>
                 </View>
                 <View style={styles.middle}>

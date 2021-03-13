@@ -51,7 +51,7 @@ export class AddPostComponent extends Component {
                                     color='green'
                                 />
                             }
-                            title = ' Photos'
+                            title = " Photos"
                             onPress = { () => this._pickImage()}
                         />
                     </View>
@@ -59,7 +59,7 @@ export class AddPostComponent extends Component {
                         <Button
                             loading = {this.props.isLoading}
                             type="clear"
-                            title = ' Submit Doubt'
+                            title = " Submit Doubt"
                             titleStyle={{color:'black'}}
                             icon = {
                                 <Icon

@@ -10,7 +10,10 @@ export const loginUser = (email, password) => async dispatch => {
         .signInWithEmailAndPassword(email, password)
         .then(user => {
             if(user.user.emailVerified){
-                dispatch(addUser(user.user));
+                db.collection('users').doc(email).onSnapshot( (doc) => {
+                    var obj = doc.data();
+                    dispatch(addUser(obj));
+                });
             }
             else{
                 dispatch(addUserError('Account not Verified'));
@@ -48,14 +51,14 @@ export const removeUser = () => ({
 });
 
 
-export const signUpUser = (email, password, userName, toggleLogin) => async dispatch => {
+export const signUpUser = (email, password, userName, toggleLogin, profession) => async dispatch => {
     dispatch(signUpUserLoading());
     firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(user => {
             user.user.updateProfile({
-                displayName: userName
+                displayName: userName,
             })
             .catch(error => dispatch(signUpuserError(error.msg)));
             user.user.sendEmailVerification()
@@ -66,8 +69,10 @@ export const signUpUser = (email, password, userName, toggleLogin) => async disp
             .catch(error => dispatch(signUpUserError(error.message)));
             db.collection('users').doc(email).set({
                 email : email,
-                userName : userName,
-                photoURL : null
+                displayName : userName,
+                photoURL : null,
+                profession : profession,
+                uid : email
             });
         })
         .catch(error => {dispatch(signUpUserError(error.message))});
@@ -88,6 +93,7 @@ export const fetchSubject = (sem) => async dispatch => {
     .doc(`${sem}`).
     get().
     then(function(doc) {
+        console.log(doc.data());
         dispatch(subjectFetch(doc.data().Subjects));
     })
     .catch(error => {dispatch(subjectError(error))});
@@ -100,6 +106,26 @@ export const subjectFetch = (subjects) => ({
 
 export const subjectError = (errorMsg) => ({
     type : ActionTypes.SUBJECT_ERROR,
+    payload : errorMsg
+});
+
+export const fetchProfessorSubject = (email) => async dispatch => {
+    db.collection('ProfessorMatrix')
+    .doc(`${email}`).
+    get().
+    then(function(doc) {
+        dispatch(professorSubjectFetch(doc.data()));
+    })
+    .catch(error => {dispatch(professorSubjectError(error))});
+};
+
+export const professorSubjectFetch = (subjects) => ({
+    type : ActionTypes.PROFESSOR_SUBJECT_FETCH,
+    payload : subjects
+});
+
+export const professorSubjectError = (errorMsg) => ({
+    type : ActionTypes.PROFESSOR_SUBJECT_ERROR,
     payload : errorMsg
 });
 
@@ -262,3 +288,22 @@ export const addUserPhoto = (image) => ({
     payload : image
 });
 
+export const fetchAssignment = (subCode) => async dispatch => {
+    db.collection('Assignments')
+    .doc(`${subCode}`).
+    get().
+    then(function(doc) {
+        dispatch(assignmentFetch(doc.data()));
+    })
+    .catch(error => {dispatch(assignmentFetchError(error))});
+};
+
+export const assignmentFetch = (assignment) => ({
+    type : ActionTypes.ADD_ASSIGNMENT,
+    payload : assignment
+});
+
+export const assignmentFetchError = (errorMsg) => ({
+    type : ActionTypes.ADD_ASSIGNMENT_ERROR,
+    payload : errorMsg
+});

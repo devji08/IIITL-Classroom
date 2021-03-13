@@ -7,6 +7,7 @@ import { signUpReducer } from './signupReducer.js'
 import { feedReducer } from './feedReducer.js'
 import { postReducer } from './postReducer.js'
 import { profileReducer } from './profileReducer.js'
+import { assignmentReducer} from './AssignmentReducer'
 import { persistStore, persistCombineReducers } from 'redux-persist'
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -25,7 +26,8 @@ export const ConfigureStore = () => {
             subjectReducer,
             feedReducer,
             postReducer,
-            profileReducer
+            profileReducer,
+            assignmentReducer
         }),
         applyMiddleware(thunk)
     );

@@ -3,8 +3,7 @@ import { connect } from 'react-redux'
 import Subject from './SubjectComponent.js';
 import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { fetchSubject } from '../redux/ActionCreators.js';
-import { fetchPost } from '../redux/ActionCreators';
+import { fetchSubject, fetchProfessorSubject, fetchPost } from '../redux/ActionCreators.js';
 import { Loading } from './loadingComponent.js';
 
 const mapStateToProps = (state) => {
@@ -17,6 +16,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => ({
     fetchSubject : (sem) => dispatch(fetchSubject(sem)),
+    fetchProfessorSubject : (email) => dispatch(fetchProfessorSubject(email)),
     fetchPost : () => dispatch(fetchPost()),
 });
 
@@ -24,6 +24,7 @@ const mapDispatchToProps = dispatch => ({
 export class Subjects extends Component {
 
     render() {
+        console.log(this.props.user);
         const {navigate} = this.props.navigation;
         var year  = parseInt(this.props.user.email.substring(3,7));
         var currentDate = new Date();
@@ -31,7 +32,13 @@ export class Subjects extends Component {
         var sem = Math.ceil((currentDate - addmissionDate)/(1000*60*60*24*30*6));
 
         if(this.props.subjects == null){
-            this.props.fetchSubject(sem);
+            if(this.props.user.profession == 'Professor'){
+                console.log(this.props.user.email);
+                this.props.fetchProfessorSubject(this.props.user.email);
+            }
+            else{
+                this.props.fetchSubject(sem);
+            }
             this.props.fetchPost();
         }
 

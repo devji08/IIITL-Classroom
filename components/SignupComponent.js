@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { Button, Input, Icon, Avatar } from 'react-native-elements';
+import DropdownMenu from 'react-native-dropdown-menu';
 import { signUpUser, signUpUserError } from '../redux/ActionCreators.js';
 import { connect } from 'react-redux';
 
@@ -12,7 +13,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    signUpUser : (email, password, userName, toggleLogin) => dispatch(signUpUser(email, password, userName, toggleLogin)),
+    signUpUser : (email, password, userName, toggleLogin, profession) => dispatch(signUpUser(email, password, userName, toggleLogin, profession)),
     signUpUserError : (error) => dispatch(signUpUserError(error))
 });
 
@@ -22,7 +23,8 @@ class SignUp extends Component {
         email: '',
         password: '',
         cpassword: '',
-        username: ''
+        username: '',
+        profession : 'Student'
     };
 
     clearState() {
@@ -34,7 +36,7 @@ class SignUp extends Component {
         })
     }
     
-    handleSignup(userName, email, password, cpassword, toggleLogin) {
+    handleSignup(userName, email, password, cpassword, toggleLogin, profession) {
         if(password != cpassword){
             this.setState({
                 password:'',
@@ -42,30 +44,43 @@ class SignUp extends Component {
             });
             this.props.signUpUserError('Password missmatch !');
         }
-        else if(email.substring(10,16)!='@iiitl'){
+        else if(email.substr(email.length-12)!='@iiitl.ac.in'){
             this.setState({
                 password:'',
                 cpassword:'',
                 email : '',
+                profession : '',
             });
             this.props.signUpUserError('Use you official E-mail !');
         }
         else{
-            this.props.signUpUser(email, password, userName, toggleLogin);
+            this.props.signUpUser(email, password, userName, toggleLogin, profession);
         }
     }
 
     render() {
         const toggleLogin = this.props.toggleLogin;
+        console.log(this.state);
+        var data = [["Student", "Professor"]];
         return(
             <View style = {styles.container}>
-                 <View style={styles.avatar}>
+                <View style={styles.avatar}>
                     <Avatar
                         size = 'xlarge'
                         source={require('./images/IIITL_logo.png')}
                     />
                 </View>
                 <Text style={styles.welcome}>WELCOME</Text>
+                <DropdownMenu
+                    style = {{flex:1}}
+                    title = 'hello'
+                    bgColor={'white'}
+                    tintColor={'#666666'}
+                    activityTintColor={'green'}
+                    optionTextStyle={{color: 'red'}}
+                    handler = {(selection,row) => {this.setState({profession : data[selection][row]})}}
+                    data = {data}
+                >
                 <Input
                     placeholder = "Full Name"
                     value = {this.state.username}
@@ -132,8 +147,9 @@ class SignUp extends Component {
                     title = "SIGNUP"
                     titleStyle={{fontWeight : 'bold'}}
                     loading = {this.props.isLoading}
-                    onPress = {() => this.handleSignup(this.state.username, this.state.email, this.state.password, this.state.cpassword, toggleLogin)}
+                    onPress = {() => this.handleSignup(this.state.username, this.state.email, this.state.password, this.state.cpassword, toggleLogin, this.state.profession)}
                 />
+                </DropdownMenu>
             </View>
         );
     }
@@ -143,7 +159,7 @@ class SignUp extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: 'white',
         justifyContent: 'center',
         padding: 15
     },
