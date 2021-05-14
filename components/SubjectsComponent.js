@@ -51,17 +51,17 @@ export class Subjects extends Component {
             subss.sort();
             var subs = [];
             for(var i=0;i<subss.length;i++){
-                subs.push({
-                    sub : subss[i],
-                    id : i
-                });
+                var obj = this.props.subjects[subss[i]];
+                obj["id"] = i;
+                subs.push(obj);
             }
+            // console.log(subss);
             return (
                 <ScrollView style={styles.container}>
                     <Subject id={10} sem={'Everyone'} navigate={navigate} subCode={"CP"} subName={"Competitive Programming"} />
                     {
                         subs.map(sub => (
-                            <Subject key={sub.id} id={sub.id} sem={sem+'th semester'} navigate={navigate} subCode={sub.sub} subName={this.props.subjects[sub.sub]}/>
+                            <Subject key={sub.Name} id={sub.id} sem={sem+'th semester'} navigate={navigate} subCode={sub.Code} subName={sub.Name} subLink = {sub.Link}/>
                         ))
                     }
                 </ScrollView>

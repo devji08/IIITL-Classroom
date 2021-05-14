@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, StyleSheet} from 'react-native'
-import { NavigationContainer } from '@react-navigation/native';
+import { View, StyleSheet, Linking} from 'react-native'
+import {Button, Icon} from 'react-native-elements'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ScrollView } from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -19,10 +19,31 @@ export class Feed extends Component {
 
     state = {
         subName : this.props.route.params.subName,
-        subCode : this.props.route.params.subCode
+        subCode : this.props.route.params.subCode,
+        subLink : this.props.route.params.subLink
     };
 
     render() {
+
+        const navigation = this.props.navigation;
+        navigation.setOptions({title : this.state.subName});
+        navigation.setOptions({
+            headerRight: () => (
+                <Button
+                  type = 'clear'
+                  icon = {
+                    <Icon
+                      type = 'font-awesome'
+                      name = 'video-camera'
+                      size = {20}
+                      color = 'grey'
+                      style = {{marginHorizontal:10}}
+                    />
+                  }
+                  onPress = {() => Linking.openURL(this.state.subLink)}
+                />
+              )
+        });
         var Classroom = () =>{
             return(
                 <ClassroomComponent subCode = {this.state.subCode} />
@@ -57,8 +78,7 @@ export class Feed extends Component {
                 )
             }
         }
-        const navigation = this.props.navigation;
-        navigation.setOptions({title : this.state.subName});
+        
         const Tab = createBottomTabNavigator();
 
         return(

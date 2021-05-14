@@ -21,11 +21,12 @@ export class Subject extends Component {
         }
     }
     render() {
+        console.log(this.props.subLink);
         return (
             <View style={styles.container}>
                 <TouchableOpacity 
                     activeOpacity = {0.9}
-                    onPress = {()=>{this.props.navigate('Feed',{subCode : this.props.subCode, subName : this.props.subName})}}    
+                    onPress = {()=>{this.props.navigate('Feed',{subCode : this.props.subCode, subName : this.props.subName, subLink : this.props.subLink})}}    
                 >
                     <View style={styles.top}>
                         <Text >{this.props.subName}</Text>
