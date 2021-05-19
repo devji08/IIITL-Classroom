@@ -28,17 +28,17 @@ class ClassroomComponent extends Component {
         var objs = [];
         var ass= [];
         if(this.props.assignments != null) ass = Object.keys(this.props.assignments);
-        console.log(ass);
         ass.forEach((key) => {
             var obj = this.props.assignments[key];
             obj["id"] = "ass"
             objs.push(obj)
         });
         var quizes = [];
-        if(this.props.quiz != null) quizes = this.props.quiz.quiz;
-        quizes.forEach((obj) => {
-            obj["id"] = "quiz"
-            objs.push(obj)
+        if(this.props.quiz != null) quizes = Object.keys(this.props.quiz);
+        quizes.forEach((key) => {
+            var obj = this.props.quiz[key];
+            obj["id"] = "quiz";
+            objs.push(obj);
         });
 
         objs.sort((a, b) => b.postdate - a.postdate)
@@ -49,7 +49,7 @@ class ClassroomComponent extends Component {
                 <View style = {styles.container}>
                     {
                         objs.map(obj => (
-                            <AssignmentComponent key = {obj.title} ass = {obj}/>       
+                            <AssignmentComponent key = {obj.title} ass = {obj} navigate = {this.props.navigate}/>       
                         ))
                     }
                 </View>

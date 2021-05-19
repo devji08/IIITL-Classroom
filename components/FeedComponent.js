@@ -24,7 +24,7 @@ export class Feed extends Component {
     };
 
     render() {
-
+        const {navigate} = this.props.navigation;
         const navigation = this.props.navigation;
         navigation.setOptions({title : this.state.subName});
         navigation.setOptions({
@@ -46,7 +46,7 @@ export class Feed extends Component {
         });
         var Classroom = () =>{
             return(
-                <ClassroomComponent subCode = {this.state.subCode} />
+                <ClassroomComponent subCode = {this.state.subCode} navigate = {navigate}/>
             )
         }
         var Forum = () => {

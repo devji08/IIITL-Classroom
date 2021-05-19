@@ -11,6 +11,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 
 import PostDetailComponent  from './PostDetailComponent.js';
+import QuizComponent from './QuizComponent';
+
 
 const mapStateToProps = state => {
   return{
@@ -90,6 +92,10 @@ class Main extends Component {
           <SubjectsNavigator.Screen
             name = 'PostDetail'
             component = {PostDetailComponent}
+          />
+          <SubjectsNavigator.Screen
+            name = 'Quiz'
+            component = {QuizComponent}
           />
         </SubjectsNavigator.Navigator>
       );
