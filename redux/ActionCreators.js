@@ -307,3 +307,23 @@ export const assignmentFetchError = (errorMsg) => ({
     type : ActionTypes.ADD_ASSIGNMENT_ERROR,
     payload : errorMsg
 });
+
+export const fetchQuiz = (subCode) => async dispatch => {
+    db.collection('Quiz')
+    .doc(`${subCode}`).
+    get().
+    then(function(doc) {
+        dispatch(quizFetch(doc.data()));
+    })
+    .catch(error => {dispatch(quizFetchError(error))});
+};
+
+export const quizFetch = (assignment) => ({
+    type : ActionTypes.ADD_QUIZ,
+    payload : assignment
+});
+
+export const quizFetchError = (errorMsg) => ({
+    type : ActionTypes.ADD_QUIZ_ERROR,
+    payload : errorMsg
+});

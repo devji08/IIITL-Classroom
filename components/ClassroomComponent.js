@@ -4,31 +4,52 @@ import {connect} from 'react-redux'
 import {ScrollView} from 'react-native-gesture-handler'
 import  { fetchAssignment } from '../redux/ActionCreators'
 import AssignmentComponent from './AssignmentComponent'
+import  { fetchQuiz } from '../redux/ActionCreators'
 
 const mapStateToProps = (state) => ({
     user : state.authentication.user,
-    assignments : state.assignmentReducer.assignments
+    assignments : state.assignmentReducer.assignments,
+    quiz : state.quizReducer.quiz
 })
 
 const mapDispatchToProps = dispatch => ({
-    fetchAssignment : (subCode) => dispatch(fetchAssignment(subCode))
+    fetchAssignment : (subCode) => dispatch(fetchAssignment(subCode)),
+    fetchQuiz : (subCode) => dispatch(fetchQuiz(subCode))
 })
 
 class ClassroomComponent extends Component {
 
     componentDidMount() {
         this.props.fetchAssignment(this.props.subCode);
+        this.props.fetchQuiz(this.props.subCode);
     }
 
     render() {
-        if(this.props.assignments == null) return(<View></View>)
-        var ass = Object.keys(this.props.assignments);
+        var objs = [];
+        var ass= [];
+        if(this.props.assignments != null) ass = Object.keys(this.props.assignments);
+        console.log(ass);
+        ass.forEach((key) => {
+            var obj = this.props.assignments[key];
+            obj["id"] = "ass"
+            objs.push(obj)
+        });
+        var quizes = [];
+        if(this.props.quiz != null) quizes = this.props.quiz.quiz;
+        quizes.forEach((obj) => {
+            obj["id"] = "quiz"
+            objs.push(obj)
+        });
+
+        objs.sort((a, b) => b.postdate - a.postdate)
+        
+        if(objs.length == 0) return(<View></View>)
         return(
             <ScrollView>
                 <View style = {styles.container}>
                     {
-                        ass.map(ass => (
-                            <AssignmentComponent key = {this.props.assignments[ass].title} ass = {this.props.assignments[ass]}/>       
+                        objs.map(obj => (
+                            <AssignmentComponent key = {obj.title} ass = {obj}/>       
                         ))
                     }
                 </View>

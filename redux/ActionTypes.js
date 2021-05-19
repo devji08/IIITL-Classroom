@@ -24,3 +24,5 @@ export const SET_COMMENT  = "GET_LIKES_COMMENTS";
 export const SET_LIKE  = "GET_LIKES_COMMENTS";
 export const ADD_ASSIGNMENT = "ADD_ASSIGNMENT";
 export const ADD_ASSIGNMENT_ERROR = "ADD_ASSIGNMENT_ERROR";
+export const ADD_QUIZ = "ADD_QUIZ";
+export const ADD_QUIZ_ERROR = "ADD_QUIZ_ERROR";

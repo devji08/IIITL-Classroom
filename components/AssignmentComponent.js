@@ -1,22 +1,18 @@
 import React, {Component} from 'react'
-import {View, StyleSheet, Text} from 'react-native'
+import {View, StyleSheet, Text, Linking} from 'react-native'
 import {Icon} from 'react-native-elements'
 import {TouchableOpacity} from 'react-native-gesture-handler'
-import {WebView} from 'react-native-webview'
 class AssignmentComponent extends Component {
 
-    state = {
-        show : false
-    };
 
     render() {
-        console.log(this.state);
+        var height = 17;
+        if(this.props.ass.id == "ass") height = 100;
         var d = new Date(this.props.ass.postdate.seconds * 1000);
         var postdate = (d.toDateString().substring(4,10));
         var duedate = (new Date(this.props.ass.due.seconds * 1000)).toDateString().substring(4,10);
-       
+        console.log(height);
         return(
-            
             <View style = {styles.container}>
                 <View style = {styles.top}>
                     <Text style = {{fontWeight:'bold', fontSize : 18, paddingBottom : 5, color : '#5b0a91'}}>{this.props.ass.title}</Text>
@@ -26,21 +22,15 @@ class AssignmentComponent extends Component {
                         <Text style = {{textAlign : 'right', flex : 1}}>Due {duedate}</Text>
                     </View>
                 </View>
-                <View style = {styles.bottom}>
+                <View style = {{height : height, paddingTop : 5}}>
                     <Text>{this.props.ass.description}</Text>
-                    <TouchableOpacity 
+                    
+                    {<TouchableOpacity 
                             activeOpacity = {0.5}
-                            onPress = {() => { this.setState({show:true})}}
+                            onPress = {() => { Linking.openURL(this.props.ass.file)}}
                         >
-                            {
-                                this.state.show &&
-                                <WebView source = {{uri : this.props.ass.file}}/>
-                            }
-                            
-                                
-                            
                         <View style={{flexDirection : 'row'}}>
-                            <View style= {{flex : 1, paddingTop : 10}}>
+                            {<View style= {{flex : 1, paddingTop : 10}}>
                                 <Icon
                                     type = 'font-awesome-5'
                                     name = 'file-pdf'
@@ -48,10 +38,10 @@ class AssignmentComponent extends Component {
                                     color = '#a62c2b'
                                     containerStyle = {{alignItems : 'flex-start'}}
                                 />
-                            </View>
+                            </View>}
                             <Text style={{flex:6, alignSelf : 'center', color : 'gray'}}>Assignment.pdf</Text>
                         </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity> }
                 </View>
             </View>
         )
