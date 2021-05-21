@@ -24,7 +24,6 @@ const mapDispatchToProps = dispatch => ({
 export class Subjects extends Component {
 
     render() {
-        console.log(this.props.user);
         const {navigate} = this.props.navigation;
         var year  = parseInt(this.props.user.email.substring(3,7));
         var currentDate = new Date();
@@ -33,7 +32,6 @@ export class Subjects extends Component {
 
         if(this.props.subjects == null){
             if(this.props.user.profession == 'Professor'){
-                console.log(this.props.user.email);
                 this.props.fetchProfessorSubject(this.props.user.email);
             }
             else{
@@ -55,7 +53,6 @@ export class Subjects extends Component {
                 obj["id"] = i;
                 subs.push(obj);
             }
-            // console.log(subss);
             return (
                 <ScrollView style={styles.container}>
                     <Subject id={10} sem={'Everyone'} navigate={navigate} subCode={"CP"} subName={"Competitive Programming"} />

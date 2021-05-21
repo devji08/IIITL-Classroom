@@ -327,3 +327,84 @@ export const quizFetchError = (errorMsg) => ({
     type : ActionTypes.ADD_QUIZ_ERROR,
     payload : errorMsg
 });
+
+export const submitAssignment = (data, file) => async dispatch => {
+    console.log("entered");
+    dispatch(submitAssignmentLoading());
+    var postRef = db.collection(data.subcode).doc(data.title);
+    var id = postRef.id;
+
+    const fileExt = file.uri.split('.').pop();
+    const response = await fetch(file.uri);
+    const blob = await response.blob();
+    const fileName = `${data.email}.${fileExt}`;
+    const email  = data.email;
+    var fileRef = firebase.storage().ref(`${data.subcode}/${data.title}/${fileName}`);
+    var uploadTask = fileRef.put(blob);
+    uploadTask.on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+        snapshot => {
+            console.log('Snapshot : '+snapshot.state);
+            if(snapshot.state === firebase.storage.TaskState.SUCCESS){
+                console.log("Success");
+            }
+        },
+        error => {
+            console.log(error.toString());
+            dispatch(submitAssignmentError(error));
+        },
+        () => {
+            fileRef.getDownloadURL()
+            .then((downloadURL) => {
+                postRef.set({[email] : {
+                    id :id,
+                    username : data.username,
+                    email : data.email,
+                    file : downloadURL,
+                    filename : file.name,
+                    timeStamp : firebase.firestore.FieldValue.serverTimestamp(),
+                    date : new Date(),
+                }}, {merge : true});
+                dispatch(submitAssignmentDone());
+            })
+            .catch(error => {
+                dispatch(submitAssignmentError(error));
+            });
+        }
+    );
+}
+
+export const submitAssignmentDone = () => ({
+    type : ActionTypes.SUBMIT_ASSIGNMENT,
+    payload: false
+});
+
+export const submitAssignmentLoading = () => ({
+    type : ActionTypes.SUBMIT_ASSIGNMENT_LOADING,
+    payload : true
+});
+
+export const submitAssignmentError = (error) => ({
+    type : ActionTypes.SUBMIT_ASSIGNMENT_ERROR,
+    payload : error
+});
+
+// export const fetchMyWork = (data) => async dispatch => {
+//     db.collection(`${data.subcode}`)
+//     .doc(`${data.title}`).
+//     get().
+//     then(function(doc) {
+//         dispatch(quizFetch(doc.data()));
+//     })
+//     .catch(error => {dispatch(quizFetchError(error))});
+// };
+
+// export const quizFetch = (assignment) => ({
+//     type : ActionTypes.ADD_QUIZ,
+//     payload : assignment
+// });
+
+// export const quizFetchError = (errorMsg) => ({
+//     type : ActionTypes.ADD_QUIZ_ERROR,
+//     payload : errorMsg
+// });

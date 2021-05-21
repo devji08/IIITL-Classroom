@@ -21,7 +21,6 @@ export class Subject extends Component {
         }
     }
     render() {
-        console.log(this.props.subLink);
         return (
             <View style={styles.container}>
                 <TouchableOpacity 

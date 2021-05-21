@@ -1,13 +1,58 @@
 import React, { Component } from 'react'
 import {View, StyleSheet, Text, Linking} from 'react-native'
+import { connect } from 'react-redux'
 import {Icon, Button} from 'react-native-elements'
 import {TouchableOpacity} from 'react-native-gesture-handler'
+import * as DocumentPicker from 'expo-document-picker'
+import { submitAssignment } from '../redux/ActionCreators'
+import db from './firebase.js'
+import firebase from 'firebase'
+
+const mapStateToProps = (state) => ({
+    user : state.authentication.user,
+    isLoading : state.submitAssignmemtReducer.isLoading,
+})
+
+const mapDispatchToProps = dispatch => ({
+    submitAssignment : (data, file) => dispatch(submitAssignment(data, file)),
+});
 
 class QuizComponent extends Component {
 
     state = {
         data : this.props.route.params.data,
+        file : null,
+        added : false,
+        myWork : null,
+        records : null
     };
+
+    _pickDocument = async () => {
+	    let result = await DocumentPicker.getDocumentAsync({});
+        if(!result.cancelled){
+            this.setState({added : true, file : result})
+        }
+	}
+
+    unSubmitWork = () => {
+        var obj = this.state.records;
+        delete obj[this.props.user.email];
+        db.collection(`${this.state.data.subcode}`).doc(`${this.state.data.title}`).set(obj);
+    }
+
+    componentDidMount() {
+        db.collection(`${this.state.data.subcode}`).doc(`${this.state.data.title}`)
+        .onSnapshot((doc) => {
+            var records = doc.data();
+            var myWork = records[this.props.user.email]
+            if( myWork != null){
+                this.setState({myWork : myWork, records : records});
+            }
+            else{
+                this.setState({myWork : null, records : records});
+            }
+        });
+    }
 
     render() {
         const navigation = this.props.navigation;
@@ -17,7 +62,6 @@ class QuizComponent extends Component {
         var postdate = (d.toDateString().substring(0,10));
         d = new Date(this.state.data.due.seconds * 1000);
         var duedate = (d.toDateString().substring(0,10));
-        console.log(this.state.data, postdate, duedate);
 
         return (
             <View style = {styles.container}>
@@ -76,7 +120,7 @@ class QuizComponent extends Component {
                                     fontWeight : '400'
                                 }}
                             >{this.state.data.description}</Text>
-                        </View>
+                    </View>
                 </View>
                 
                 <TouchableOpacity
@@ -133,20 +177,124 @@ class QuizComponent extends Component {
                             </Text>           
                         </View>
                         <View>
-
+                            
                         </View>
                         <View
                             style = {{
                                 borderWidth : 1,
                                 borderRadius : 5,
-                                borderColor : '#dadce0'
+                                borderColor : '#dadce0',
+                                marginBottom : 10
+                            }}
+                        >
+                            {this.state.myWork != null ? 
+                                <View>
+                                    <View
+                                    >
+                                        <View style = {{flexDirection : 'row', padding : 5}}>
+                                                <View
+                                                    style = {{
+                                                        marginRight : 10,
+                                                        borderRightWidth : 1,
+                                                        borderRightColor : '#e0e0e0'
+                                                    }}
+                                                >
+                                                    <Icon
+                                                        type = 'font-awesome-5'
+                                                        name = 'file-pdf'
+                                                        size = {50}
+                                                        color = '#d14f2e'
+                                                        containerStyle = {{padding : 5}}
+                                                    />
+                                                </View>
+                                                <View
+                                                    style = {{alignSelf : 'center' }}
+                                                >
+                                                    <Text
+                                                        style = {{
+                                                            fontSize : 15,
+                                                            color : '#3c4043',
+                                                            fontFamily : 'Roboto',
+                                                            fontWeight : '400',
+                                                        }}
+                                                    >{this.state.myWork.filename}</Text>
+                                                </View>
+                                        </View>
+                                    </View>
+                                </View>
+                                : 
+                                this.state.added ?
+                                <View>
+                                    <View
+                                    >
+                                        <View style = {{flexDirection : 'row', padding : 5}}>
+                                                <View
+                                                    style = {{
+                                                        marginRight : 10,
+                                                        borderRightWidth : 1,
+                                                        borderRightColor : '#e0e0e0'
+                                                    }}
+                                                >
+                                                    <Icon
+                                                        type = 'font-awesome-5'
+                                                        name = 'file-pdf'
+                                                        size = {50}
+                                                        color = '#d14f2e'
+                                                        containerStyle = {{padding : 5}}
+                                                    />
+                                                </View>
+                                                <View
+                                                    style = {{alignSelf : 'center' }}
+                                                >
+                                                    <Text
+                                                        style = {{
+                                                            fontSize : 15,
+                                                            color : '#3c4043',
+                                                            fontFamily : 'Roboto',
+                                                            fontWeight : '400',
+                                                        }}
+                                                    >{this.state.file.name}</Text>
+                                                </View>
+                                        </View>
+                                    </View>
+                                </View>
+                                :
+                                <Button
+                                    type = 'clear'
+                                    icon={
+                                        <Icon
+                                        type = 'font-awesome-5'
+                                        name = 'plus'
+                                        size = {15}
+                                        color = '#1967d2'
+                                        containerStyle = {{marginRight : 5}}
+                                        />}
+                                    title = 'Add or create'
+                                    titleStyle = {{fontWeight : 'bold'}}
+                                    color = 'white'
+                                    onPress = {() => this._pickDocument()}
+                                />
+                            }
+                        </View>
+                        <View
+                            style = {{
+                                borderWidth : 1,
+                                borderRadius : 5,
+                                borderColor : '#dadce0',
+                                marginBottom : 10
                             }}
                         >
                             <Button
-                                type = 'clear'
-                                title = 'Submit'
+                                type = 'solid'
+                                title = {this.state.myWork != null ? 'Unsubmit' : 'Submit'}
                                 color = 'white'
-                                onPress = {console.log("submitted")}
+                                onPress = {this.state.myWork == null ? this.state.file == null ? console.log("No file added"):
+                                            () => this.props.submitAssignment({subcode : this.state.data.subcode, username : this.props.user.displayName, email : this.props.user.email, title : this.state.data.title}, this.state.file)
+                                            :
+                                            () => {this.unSubmitWork()}
+                                        }
+                                loading = {this.props.isLoading}
+                                titleStyle = {{fontWeight : 'bold'}}
                             />
                         </View>
                     </View>
@@ -182,4 +330,4 @@ const styles = StyleSheet.create({
     
 })
 
-export default QuizComponent;
+export default connect(mapStateToProps, mapDispatchToProps)(QuizComponent);
