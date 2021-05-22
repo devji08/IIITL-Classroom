@@ -290,9 +290,8 @@ export const addUserPhoto = (image) => ({
 
 export const fetchAssignment = (subCode) => async dispatch => {
     db.collection('Assignments')
-    .doc(`${subCode}`).
-    get().
-    then(function(doc) {
+    .doc(`${subCode}`)
+    .onSnapshot((doc) => {
         dispatch(assignmentFetch(doc.data()));
     })
     .catch(error => {dispatch(assignmentFetchError(error))});
@@ -311,8 +310,7 @@ export const assignmentFetchError = (errorMsg) => ({
 export const fetchQuiz = (subCode) => async dispatch => {
     db.collection('Quiz')
     .doc(`${subCode}`).
-    get().
-    then(function(doc) {
+    onSnapshot((doc) => {
         dispatch(quizFetch(doc.data()));
     })
     .catch(error => {dispatch(quizFetchError(error))});
@@ -329,9 +327,9 @@ export const quizFetchError = (errorMsg) => ({
 });
 
 export const submitAssignment = (data, file) => async dispatch => {
-    console.log("entered");
     dispatch(submitAssignmentLoading());
-    var postRef = db.collection(data.subcode).doc(data.title);
+    console.log("entered", data);
+    var postRef = db.collection(`${data.subcode}`).doc(`${data.title}`);
     var id = postRef.id;
 
     const fileExt = file.uri.split('.').pop();
@@ -362,6 +360,7 @@ export const submitAssignment = (data, file) => async dispatch => {
                     email : data.email,
                     file : downloadURL,
                     filename : file.name,
+                    marks : 0,
                     timeStamp : firebase.firestore.FieldValue.serverTimestamp(),
                     date : new Date(),
                 }}, {merge : true});
@@ -389,22 +388,65 @@ export const submitAssignmentError = (error) => ({
     payload : error
 });
 
-// export const fetchMyWork = (data) => async dispatch => {
-//     db.collection(`${data.subcode}`)
-//     .doc(`${data.title}`).
-//     get().
-//     then(function(doc) {
-//         dispatch(quizFetch(doc.data()));
-//     })
-//     .catch(error => {dispatch(quizFetchError(error))});
-// };
+export const createAssignment = (data) => async dispatch => {
 
-// export const quizFetch = (assignment) => ({
-//     type : ActionTypes.ADD_QUIZ,
-//     payload : assignment
-// });
+    dispatch(createAssignmentLoading());
+    var postRef = db.collection(`${data.type}`).doc(`${data.subcode}`);
+    var id = postRef.id;
 
-// export const quizFetchError = (errorMsg) => ({
-//     type : ActionTypes.ADD_QUIZ_ERROR,
-//     payload : errorMsg
-// });
+    const fileExt = data.file.split('.').pop();
+    const response = await fetch(data.file);
+    const blob = await response.blob();
+    const fileName = `${data.title}.${fileExt}`;
+    var fileRef = firebase.storage().ref(`${data.type}/${data.subcode}/${fileName}`);
+    var uploadTask = fileRef.put(blob);
+    uploadTask.on(
+        firebase.storage.TaskEvent.STATE_CHANGED,
+        snapshot => {
+            console.log('Snapshot : '+snapshot.state);
+            if(snapshot.state === firebase.storage.TaskState.SUCCESS){
+                console.log("Success");
+            }
+        },
+        error => {
+            console.log(error.toString());
+            dispatch(createAssignmentError(error));
+        },
+        () => {
+            console.log("goback");
+            fileRef.getDownloadURL()
+            .then((downloadURL) => {
+                postRef.set({[data.title] : {
+                    description : data.description,
+                    due : data.due,
+                    file : downloadURL,
+                    points : data.points,
+                    postdate : new Date(),
+                    professor : data.professor,
+                    title : data.title,
+                }}, {merge : true});
+                dispatch(createAssignmentDone());
+                data.navigation.goBack();
+            })
+            .catch(error => {
+                console.log(error)
+                dispatch(createAssignmentError(error));
+            });
+        }
+    );
+};
+
+export const createAssignmentDone = () => ({
+    type : ActionTypes.CREATE_ASSIGNMENT,
+    payload : false
+});
+
+export const createAssignmentLoading = () => ({
+    type : ActionTypes.CREATE_ASSIGNMENT_LOADING,
+    payload : true
+});
+
+export const createAssignmentError = (errorMsg) => ({
+    type : ActionTypes.CREATE_ASSIGNMENT_ERROR,
+    payload : errorMsg
+});

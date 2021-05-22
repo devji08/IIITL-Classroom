@@ -46,7 +46,7 @@ export class Feed extends Component {
         });
         var Classroom = () =>{
             return(
-                <ClassroomComponent subCode = {this.state.subCode} navigate = {navigate}/>
+                <ClassroomComponent subCode = {this.state.subCode} subName = {this.state.subName} navigate = {navigate}/>
             )
         }
         var Forum = () => {

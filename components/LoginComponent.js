@@ -57,7 +57,7 @@ class Login extends Component {
                             size = {15}
                             color ='grey'
                         />
-                    }   
+                    }
                     errorMessage = {this.props.errormsg}
                 />
                 <Text 

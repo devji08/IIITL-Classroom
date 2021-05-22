@@ -2,11 +2,10 @@ import React, { Component } from 'react'
 import {View, StyleSheet, Text, Linking} from 'react-native'
 import { connect } from 'react-redux'
 import {Icon, Button} from 'react-native-elements'
-import {TouchableOpacity} from 'react-native-gesture-handler'
+import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler'
 import * as DocumentPicker from 'expo-document-picker'
 import { submitAssignment } from '../redux/ActionCreators'
 import db from './firebase.js'
-import firebase from 'firebase'
 
 const mapStateToProps = (state) => ({
     user : state.authentication.user,
@@ -41,17 +40,43 @@ class QuizComponent extends Component {
     }
 
     componentDidMount() {
+        console.log(this.state.data);
         db.collection(`${this.state.data.subcode}`).doc(`${this.state.data.title}`)
         .onSnapshot((doc) => {
-            var records = doc.data();
-            var myWork = records[this.props.user.email]
+            console.log(doc.data());
+            var records = doc.data() || {};
+            var myWork = null;
+            if(this.props.user.email in records){
+                myWork = records[this.props.user.email];
+            }
             if( myWork != null){
                 this.setState({myWork : myWork, records : records});
             }
             else{
-                this.setState({myWork : null, records : records});
+                this.setState({myWork : null, records : records, added : false});
             }
         });
+    }
+
+    submissionComponent = (props) => {
+        var data = props.data;
+        return(
+            
+            <TouchableOpacity
+                activeOpacity = {0.5}
+                onPress = {() => { console.log(data)}}
+                style = {{padding : 10, flexDirection : 'row', marginBottom : 10, elevation : 1, borderWidth : 1,borderRadius : 15, borderColor : '#dadce0',}}
+            >
+                <View style = {{flex : 7, borderRightWidth : 1, borderColor : '#dadce0', marginRight : 20}}>
+                    <Text>{data.username}</Text>
+                    <Text>{data.email}</Text>
+                </View>
+                <View style = {{flex: 1,alignSelf : 'center'}}>
+                    <Text style = {{}}>{data.marks}</Text>
+                </View>
+                
+            </TouchableOpacity>
+        )
     }
 
     render() {
@@ -63,6 +88,11 @@ class QuizComponent extends Component {
         d = new Date(this.state.data.due.seconds * 1000);
         var duedate = (d.toDateString().substring(0,10));
 
+        var submissions = [];
+        if(this.state.records != null){
+            var arr = Object.keys(this.state.records);
+            arr.map(key => {submissions.push(this.state.records[key])});
+        }
         return (
             <View style = {styles.container}>
                 <View>
@@ -162,143 +192,167 @@ class QuizComponent extends Component {
                     </View>
                 </TouchableOpacity>
 
-                <View>
-                    <View style = {styles.elevation}>
-                        <View>
-                            <Text
-                             style = {{
-                                fontSize : 18,
-                                color : '#3c4043',
-                                fontFamily : 'Roboto',
-                                fontWeight : '400',
-                                marginBottom : 10
-                            }}>
-                                Your Work
-                            </Text>           
-                        </View>
-                        <View>
-                            
-                        </View>
-                        <View
-                            style = {{
-                                borderWidth : 1,
-                                borderRadius : 5,
-                                borderColor : '#dadce0',
-                                marginBottom : 10
-                            }}
-                        >
-                            {this.state.myWork != null ? 
-                                <View>
-                                    <View
-                                    >
-                                        <View style = {{flexDirection : 'row', padding : 5}}>
-                                                <View
-                                                    style = {{
-                                                        marginRight : 10,
-                                                        borderRightWidth : 1,
-                                                        borderRightColor : '#e0e0e0'
-                                                    }}
-                                                >
-                                                    <Icon
-                                                        type = 'font-awesome-5'
-                                                        name = 'file-pdf'
-                                                        size = {50}
-                                                        color = '#d14f2e'
-                                                        containerStyle = {{padding : 5}}
-                                                    />
-                                                </View>
-                                                <View
-                                                    style = {{alignSelf : 'center' }}
-                                                >
-                                                    <Text
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+                {this.props.user.profession != 'Professor'?
+                    <View>
+                        <View style = {styles.elevation}>
+                            <View>
+                                <Text
+                                style = {{
+                                    fontSize : 18,
+                                    color : '#3c4043',
+                                    fontFamily : 'Roboto',
+                                    fontWeight : '400',
+                                    marginBottom : 10
+                                }}>
+                                    Your Work
+                                </Text>           
+                            </View>
+                            <View>
+                                
+                            </View>
+                            <View
+                                style = {{
+                                    borderWidth : 1,
+                                    borderRadius : 5,
+                                    borderColor : '#dadce0',
+                                    marginBottom : 10
+                                }}
+                            >
+                                {this.state.myWork != null ? 
+                                    <View>
+                                        <View
+                                        >
+                                            <View style = {{flexDirection : 'row', padding : 5}}>
+                                                    <View
                                                         style = {{
-                                                            fontSize : 15,
-                                                            color : '#3c4043',
-                                                            fontFamily : 'Roboto',
-                                                            fontWeight : '400',
+                                                            marginRight : 10,
+                                                            borderRightWidth : 1,
+                                                            borderRightColor : '#e0e0e0'
                                                         }}
-                                                    >{this.state.myWork.filename}</Text>
-                                                </View>
+                                                    >
+                                                        <Icon
+                                                            type = 'font-awesome-5'
+                                                            name = 'file-pdf'
+                                                            size = {50}
+                                                            color = '#d14f2e'
+                                                            containerStyle = {{padding : 5}}
+                                                        />
+                                                    </View>
+                                                    <View
+                                                        style = {{alignSelf : 'center' }}
+                                                    >
+                                                        <Text
+                                                            style = {{
+                                                                fontSize : 15,
+                                                                color : '#3c4043',
+                                                                fontFamily : 'Roboto',
+                                                                fontWeight : '400',
+                                                            }}
+                                                        >{this.state.myWork.filename}</Text>
+                                                    </View>
+                                            </View>
                                         </View>
                                     </View>
-                                </View>
-                                : 
-                                this.state.added ?
-                                <View>
-                                    <View
-                                    >
-                                        <View style = {{flexDirection : 'row', padding : 5}}>
-                                                <View
-                                                    style = {{
-                                                        marginRight : 10,
-                                                        borderRightWidth : 1,
-                                                        borderRightColor : '#e0e0e0'
-                                                    }}
-                                                >
-                                                    <Icon
-                                                        type = 'font-awesome-5'
-                                                        name = 'file-pdf'
-                                                        size = {50}
-                                                        color = '#d14f2e'
-                                                        containerStyle = {{padding : 5}}
-                                                    />
-                                                </View>
-                                                <View
-                                                    style = {{alignSelf : 'center' }}
-                                                >
-                                                    <Text
+                                    : 
+                                    this.state.added ?
+                                    <View>
+                                        <View
+                                        >
+                                            <View style = {{flexDirection : 'row', padding : 5}}>
+                                                    <View
                                                         style = {{
-                                                            fontSize : 15,
-                                                            color : '#3c4043',
-                                                            fontFamily : 'Roboto',
-                                                            fontWeight : '400',
+                                                            marginRight : 10,
+                                                            borderRightWidth : 1,
+                                                            borderRightColor : '#e0e0e0'
                                                         }}
-                                                    >{this.state.file.name}</Text>
-                                                </View>
+                                                    >
+                                                        <Icon
+                                                            type = 'font-awesome-5'
+                                                            name = 'file-pdf'
+                                                            size = {50}
+                                                            color = '#d14f2e'
+                                                            containerStyle = {{padding : 5}}
+                                                        />
+                                                    </View>
+                                                    <View
+                                                        style = {{alignSelf : 'center' }}
+                                                    >
+                                                        <Text
+                                                            style = {{
+                                                                fontSize : 15,
+                                                                color : '#3c4043',
+                                                                fontFamily : 'Roboto',
+                                                                fontWeight : '400',
+                                                            }}
+                                                        >{this.state.file.name}</Text>
+                                                    </View>
+                                            </View>
                                         </View>
                                     </View>
-                                </View>
-                                :
+                                    :
+                                    <Button
+                                        type = 'clear'
+                                        icon={
+                                            <Icon
+                                            type = 'font-awesome-5'
+                                            name = 'plus'
+                                            size = {15}
+                                            color = '#1967d2'
+                                            containerStyle = {{marginRight : 5}}
+                                            />}
+                                        title = 'Add or create'
+                                        titleStyle = {{fontWeight : 'bold'}}
+                                        color = 'white'
+                                        onPress = {() => this._pickDocument()}
+                                    />
+                                }
+                            </View>
+                            <View
+                                style = {{
+                                    borderWidth : 1,
+                                    borderRadius : 5,
+                                    borderColor : '#dadce0',
+                                    marginBottom : 10
+                                }}
+                            >
                                 <Button
-                                    type = 'clear'
-                                    icon={
-                                        <Icon
-                                        type = 'font-awesome-5'
-                                        name = 'plus'
-                                        size = {15}
-                                        color = '#1967d2'
-                                        containerStyle = {{marginRight : 5}}
-                                        />}
-                                    title = 'Add or create'
-                                    titleStyle = {{fontWeight : 'bold'}}
+                                    type = 'solid'
+                                    title = {this.state.myWork != null ? 'Unsubmit' : 'Submit'}
                                     color = 'white'
-                                    onPress = {() => this._pickDocument()}
+                                    onPress = {this.state.myWork == null ? this.state.file == null ? console.log("No file added"):
+                                                () => this.props.submitAssignment({subcode : this.state.data.subcode, username : this.props.user.displayName, email : this.props.user.email, title : this.state.data.title}, this.state.file)
+                                                :
+                                                () => {this.unSubmitWork()}
+                                            }
+                                    loading = {this.props.isLoading}
+                                    titleStyle = {{fontWeight : 'bold'}}
                                 />
-                            }
-                        </View>
-                        <View
-                            style = {{
-                                borderWidth : 1,
-                                borderRadius : 5,
-                                borderColor : '#dadce0',
-                                marginBottom : 10
-                            }}
-                        >
-                            <Button
-                                type = 'solid'
-                                title = {this.state.myWork != null ? 'Unsubmit' : 'Submit'}
-                                color = 'white'
-                                onPress = {this.state.myWork == null ? this.state.file == null ? console.log("No file added"):
-                                            () => this.props.submitAssignment({subcode : this.state.data.subcode, username : this.props.user.displayName, email : this.props.user.email, title : this.state.data.title}, this.state.file)
-                                            :
-                                            () => {this.unSubmitWork()}
-                                        }
-                                loading = {this.props.isLoading}
-                                titleStyle = {{fontWeight : 'bold'}}
-                            />
+                            </View>
                         </View>
                     </View>
-                </View>                        
+                    :
+                    <View>
+                        <View style = {{padding : 10, borderRadius : 15, borderColor : '#dadce0', borderWidth : 1}}>
+                            <Text style ={{fontSize : 25, color : '#3c4043', fontFamily : 'Roboto', fontWeight : '400', marginBottom : 10, borderBottomColor : '#dadce0', borderBottomWidth : 1, padding : 10}}>Submissions</Text>
+                            {submissions.length == 0 ? 
+                            <View style = {{padding : 10}}>
+                                <Text style = {{fontSize : 15, color : 'gray', fontFamily : 'Roboto',fontWeight : '400', marginBottom : 10}}>No submissions are available currently.</Text>
+                            </View>
+                            :
+                            <ScrollView>
+                                {submissions.map(data => (<this.submissionComponent data = {data} key = {data.email}/>))}
+                            </ScrollView>}
+                        </View>
+                    </View>
+                }                        
             </View>
         )
     }

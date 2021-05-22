@@ -12,6 +12,8 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import PostDetailComponent  from './PostDetailComponent.js';
 import QuizComponent from './QuizComponent';
+import CheckAssignmentComponent from './CheckAssignmentComponent'
+import AddAssignmentComponent from './AddAssignmentComponent'
 
 
 const mapStateToProps = state => {
@@ -96,6 +98,14 @@ class Main extends Component {
           <SubjectsNavigator.Screen
             name = 'Quiz'
             component = {QuizComponent}
+          />
+          <SubjectsNavigator.Screen
+            name = 'AddAssignment'
+            component = {AddAssignmentComponent}
+          />
+          <SubjectsNavigator.Screen
+            name = 'CheckAssignment'
+            component = {CheckAssignmentComponent}
           />
         </SubjectsNavigator.Navigator>
       );
