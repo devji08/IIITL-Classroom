@@ -450,3 +450,36 @@ export const createAssignmentError = (errorMsg) => ({
     type : ActionTypes.CREATE_ASSIGNMENT_ERROR,
     payload : errorMsg
 });
+
+export const checkAssignment = (data) => async dispatch => {
+    console.log(data);
+    dispatch(checkAssignmentLoading());
+
+    db.collection(`${data.subcode}`).doc(`${data.title}`).set({
+        [data.email] : {marks : data.points} 
+    },{merge : true})
+    .then(() => {
+        dispatch(checkAssignmentDone());
+        console.log("Document successfully written!");
+        data.navigation.goBack();
+    })
+    .catch((error) => {
+        dispatch(checkAssignmentError());
+        console.error("Error writing document: ", error);
+    });
+};
+
+export const checkAssignmentDone = () => ({
+    type : ActionTypes.CHECK_ASSIGNMENT,
+    payload : false
+});
+
+export const checkAssignmentLoading = () => ({
+    type : ActionTypes.CHECK_ASSIGNMENT_LOADING,
+    payload : true
+});
+
+export const checkAssignmentError = (errorMsg) => ({
+    type : ActionTypes.CHECK_ASSIGNMENT_ERROR,
+    payload : errorMsg
+});

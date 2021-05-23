@@ -64,7 +64,7 @@ class QuizComponent extends Component {
             
             <TouchableOpacity
                 activeOpacity = {0.5}
-                onPress = {() => { console.log(data)}}
+                onPress = {() => { props.navigation.navigate('CheckAssignment',{data : data, assignment : this.state.data})}}
                 style = {{padding : 10, flexDirection : 'row', marginBottom : 10, elevation : 1, borderWidth : 1,borderRadius : 15, borderColor : '#dadce0',}}
             >
                 <View style = {{flex : 7, borderRightWidth : 1, borderColor : '#dadce0', marginRight : 20}}>
@@ -348,7 +348,7 @@ class QuizComponent extends Component {
                             </View>
                             :
                             <ScrollView>
-                                {submissions.map(data => (<this.submissionComponent data = {data} key = {data.email}/>))}
+                                {submissions.map(data => (<this.submissionComponent data = {data} key = {data.email} navigation = {this.props.navigation}/>))}
                             </ScrollView>}
                         </View>
                     </View>
