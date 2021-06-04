@@ -109,6 +109,27 @@ export const subjectError = (errorMsg) => ({
     payload : errorMsg
 });
 
+export const fetchSubjectInfo = (subCode) => async dispatch => {
+    db.collection('SubjectInfo')
+    .doc(`${subCode}`).
+    get().
+    then(function(doc) {
+        console.log(doc.data());
+        dispatch(subjectInfoFetch(doc.data()));
+    })
+    .catch(error => {dispatch(subjectInfoError(error))});
+};
+
+export const subjectInfoFetch = (subjectInfo) => ({
+    type : ActionTypes.SUBJECT_INFO_FETCH,
+    payload : subjectInfo
+});
+
+export const subjectInfoError = (errorMsg) => ({
+    type : ActionTypes.SUBJECT_INFO_ERROR,
+    payload : errorMsg
+});
+
 export const fetchProfessorSubject = (email) => async dispatch => {
     db.collection('ProfessorMatrix')
     .doc(`${email}`).

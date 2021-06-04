@@ -3,37 +3,62 @@ import { View, Text, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Table, Row, Rows } from "react-native-table-component";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { fetchSubjectInfo } from "../redux/ActionCreators.js";
+import { Loading } from "./loadingComponent.js";
+import { connect } from "react-redux";
+
+const mapStateToProps = (state) => {
+  return {
+    subjectInfo: state.subjectInfoReducer.subjectInfo,
+    isLoading: state.subjectInfoReducer.isLoading,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchSubjectInfo: (subCode) => dispatch(fetchSubjectInfo(subCode)),
+});
 
 class SubjectInfoComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      lectureHead: ["Lecture no.", "Topics to be covered"],
-      lectureData: [
-        [
-          "L1_U1",
-          "Introduction – Computer Networks, Internetworking, Distributed system",
-        ],
-        [
-          "L2_U1",
-          "Computer Networks – Usage & Applications, Unicasting, multicasting, any-casting, and LAN.",
-        ],
-        ["L3_U1", "Software and protocols"],
-        ["L4_U1", "Layer designing and issues"],
-        ["L5_U1", "TCP/IP"],
-        ["L6_U1", "ISO-OSI Model"],
-        ["L7_U1", "Data Link Layer, Network Layer"],
-        ["L8_U1", "Transport, Session Layer"],
-        ["L8a_U1", "Presentation Layer, Applicaion Layer"],
-      ],
-    };
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     lectureHead: ["Lecture no.", "Topics to be covered"],
+  //     lectureData: [
+  //       [
+  //         "L1_U1",
+  //         "Introduction – Computer Networks, Internetworking, Distributed system",
+  //       ],
+  //       [
+  //         "L2_U1",
+  //         "Computer Networks – Usage & Applications, Unicasting, multicasting, any-casting, and LAN.",
+  //       ],
+  //       ["L3_U1", "Software and protocols"],
+  //       ["L4_U1", "Layer designing and issues"],
+  //       ["L5_U1", "TCP/IP"],
+  //       ["L6_U1", "ISO-OSI Model"],
+  //       ["L7_U1", "Data Link Layer, Network Layer"],
+  //       ["L8_U1", "Transport, Session Layer"],
+  //       ["L8a_U1", "Presentation Layer, Applicaion Layer"],
+  //     ],
+  //   };
+  // }
 
+  componentDidMount() {
+    this.props.fetchSubjectInfo(this.props.subCode);
+  }
   render() {
-    const state = this.state;
+    console.log("Subject Info: ", this.props.subjectInfo);
+
+    if (this.props.isLoading) {
+      return <Loading />;
+    } else {
+      return <View></View>;
+    }
+
+    // const state = this.state;
     return (
       <View style={{ flex: 1 }}>
-        <ScrollView>
+        {/* <ScrollView>
           <View style={styles.container}>
             <View style={styles.card}>
               <View style={styles.basicInfoRow}>
@@ -155,6 +180,11 @@ class SubjectInfoComponent extends Component {
                   flexArr={[1, 4]}
                   textStyle={styles.tableText}
                 />
+                <Row
+                  data={state.lectureHead}
+                  flexArr={[1, 4]}
+                  textStyle={styles.tableText}
+                />
               </Table>
             </View>
 
@@ -197,7 +227,7 @@ class SubjectInfoComponent extends Component {
             </View>
             
           </View>
-        </ScrollView>
+        </ScrollView> */}
       </View>
     );
   }
@@ -279,4 +309,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SubjectInfoComponent;
+export default connect( mapStateToProps, mapDispatchToProps )(SubjectInfoComponent);

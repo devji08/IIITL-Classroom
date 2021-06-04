@@ -82,7 +82,7 @@ export class Feed extends Component {
 
         var Info = () => {
             return (
-                <SubjectInfoComponent />
+                <SubjectInfoComponent subCode = {this.state.subCode} />
             )
         }
         
