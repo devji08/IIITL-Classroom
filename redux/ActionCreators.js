@@ -114,7 +114,7 @@ export const fetchSubjectInfo = (subCode) => async dispatch => {
     .doc(`${subCode}`).
     get().
     then(function(doc) {
-        console.log(doc.data());
+        // console.log(doc.data());
         dispatch(subjectInfoFetch(doc.data()));
     })
     .catch(error => {dispatch(subjectInfoError(error))});

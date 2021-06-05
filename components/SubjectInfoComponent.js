@@ -19,217 +19,115 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 class SubjectInfoComponent extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     lectureHead: ["Lecture no.", "Topics to be covered"],
-  //     lectureData: [
-  //       [
-  //         "L1_U1",
-  //         "Introduction – Computer Networks, Internetworking, Distributed system",
-  //       ],
-  //       [
-  //         "L2_U1",
-  //         "Computer Networks – Usage & Applications, Unicasting, multicasting, any-casting, and LAN.",
-  //       ],
-  //       ["L3_U1", "Software and protocols"],
-  //       ["L4_U1", "Layer designing and issues"],
-  //       ["L5_U1", "TCP/IP"],
-  //       ["L6_U1", "ISO-OSI Model"],
-  //       ["L7_U1", "Data Link Layer, Network Layer"],
-  //       ["L8_U1", "Transport, Session Layer"],
-  //       ["L8a_U1", "Presentation Layer, Applicaion Layer"],
-  //     ],
-  //   };
-  // }
-
   componentDidMount() {
     this.props.fetchSubjectInfo(this.props.subCode);
   }
-  render() {
-    console.log("Subject Info: ", this.props.subjectInfo);
 
+  render() {
     if (this.props.isLoading) {
       return <Loading />;
+    } else if (this.props.subjectInfo) {
+      const state = this.props.subjectInfo;
+      state.subCode = this.props.subCode;
+      const startDate = new Date(state.duration.startDate?.toDate());
+      const endDate = new Date(state.duration.endDate?.toDate());
+      state.duration = `${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}`;
+      const basicDetails = [
+        ["facultyName", "Name of Faculty :"],
+        ["department", "Department :"],
+        ["subjectName", "Course Module :"],
+        ["subCode", "Course Code :"],
+        ["duration", "Duration :"],
+      ];
+
+      return (
+        <View style={{ flex: 1 }}>
+          <ScrollView>
+            <View style={styles.container}>
+              <View style={styles.card}>
+                {basicDetails.map((details, i) => {
+                  if (state[details[0]]) {
+                    return (
+                      <View style={styles.basicInfoRow} key={i}>
+                        <View style={styles.basicInfoCol1}>
+                          <Text style={styles.basicInfoText1}>
+                            {details[1]}
+                          </Text>
+                        </View>
+                        <View style={styles.basicInfoCol2}>
+                          <Text style={styles.basicInfoText2}>
+                            {state[details[0]]}
+                          </Text>
+                        </View>
+                      </View>
+                    );
+                  }
+                })}
+              </View>
+            </View>
+
+            {state.info.map((info, i) => {
+              if (info.type == "paragraph") {
+                return (
+                  <View style={styles.card} key={i}>
+                    <Text style={styles.cardHeading}>{info.heading}</Text>
+                    {info.content.map((para, j) => (
+                      <Text style={styles.cardParagraph} key={j}>
+                        {para}
+                      </Text>
+                    ))}
+                  </View>
+                );
+              } else if (info.type == "bullet") {
+                return (
+                  <View style={styles.card} key={i}>
+                    <Text style={styles.cardHeading}>{info.heading}</Text>
+                    {info.content.map((point, j) => (
+                      <View style={styles.cardBulletContainer} key={j}>
+                        <View style={styles.bulletIcon}>
+                          <Ionicons name="ios-radio-button-on" size={10} />
+                        </View>
+                        <View>
+                          <Text style={styles.bulletContent}>{point}</Text>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                );
+              } else if (info.type == "table") {
+                const rowArr = [];
+                Object.keys(info.content.rows).map(function (key) {
+                  rowArr.push(info.content.rows[key]);
+                });
+
+                return (
+                  <View style={styles.card} key={i}>
+                    <Text style={styles.cardHeading}>{info.heading}</Text>
+                    <Table
+                      borderStyle={{ borderWidth: 2, borderColor: "#F2F2F2" }}
+                    >
+                      <Row
+                        data={info.content.tableHead}
+                        flexArr={info.flexArr}
+                        style={styles.tableHead}
+                        textStyle={styles.tableHeadText}
+                      />
+                      <Rows
+                        data={rowArr}
+                        flexArr={info.flexArr}
+                        textStyle={styles.tableText}
+                      />
+                    </Table>
+                  </View>
+                );
+              }
+            })}
+          </ScrollView>
+        </View>
+      );
     } else {
-      return <View></View>;
+      return <></>;
     }
-
-    // const state = this.state;
-    return (
-      <View style={{ flex: 1 }}>
-        {/* <ScrollView>
-          <View style={styles.container}>
-            <View style={styles.card}>
-              <View style={styles.basicInfoRow}>
-                <View style={styles.basicInfoCol1}>
-                  <Text style={styles.basicInfoText1}>Name of Faculty :</Text>
-                </View>
-                <View style={styles.basicInfoCol2}>
-                  <Text style={styles.basicInfoText2}>
-                    Dr. Brijesh Kumar Chaurasia
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.basicInfoRow}>
-                <View style={styles.basicInfoCol1}>
-                  <Text style={styles.basicInfoText1}>Department :</Text>
-                </View>
-                <View style={styles.basicInfoCol2}>
-                  <Text style={styles.basicInfoText2}>
-                    Information Technology
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.basicInfoRow}>
-                <View style={styles.basicInfoCol1}>
-                  <Text style={styles.basicInfoText1}>Course Module :</Text>
-                </View>
-                <View style={styles.basicInfoCol2}>
-                  <Text style={styles.basicInfoText2}>Computer Network</Text>
-                </View>
-              </View>
-              <View style={styles.basicInfoRow}>
-                <View style={styles.basicInfoCol1}>
-                  <Text style={styles.basicInfoText1}>Course Code :</Text>
-                </View>
-                <View style={styles.basicInfoCol2}>
-                  <Text style={styles.basicInfoText2}>CNE431</Text>
-                </View>
-              </View>
-              <View style={styles.basicInfoRow}>
-                <View style={styles.basicInfoCol1}>
-                  <Text style={styles.basicInfoText1}>Duration :</Text>
-                </View>
-                <View style={styles.basicInfoCol2}>
-                  <Text style={styles.basicInfoText2}>Jan - June 2021</Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={styles.cardHeading}>Objective(s):</Text>
-              <Text style={styles.cardParagraph}>
-                To introduce students with an overview of the concepts &
-                fundamentals of data communication, computer networks.
-              </Text>
-            </View>
-            
-            <View style={styles.card}>
-              <Text style={styles.cardHeading}>Prerequisites:</Text>
-              <Text style={styles.cardParagraph}>
-                Basic understanding of Windows/Linux operating system and
-                programming concepts. In particular, goals for course module is
-                to understand the state-of-the-art in network protocols,
-                architectures and applications and to understand how networking
-                research is done.
-              </Text>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={styles.cardHeading}>Course Contents:</Text>
-              <Text style={styles.cardParagraph}>
-                Fundamentals of computer networks, usage, applications, and
-                types. OSI Reference Models & TCP/IP model.
-              </Text>
-              <Text style={styles.cardParagraph}>
-                Physical Layer, Data Link Layer: Framing, Error Control, Error
-                Detection and Correction, Flow Control. Data Link Protocols:
-                Simplex Stop-and-Wait Protocol, Sliding Window Protocols,
-                One-Bit Sliding Window Protocol, Go-Back-N and Selective Repeat,
-                HDLC, PPP Medium Access Control Sublayer, The Channel
-                Allocation.
-              </Text>
-              <Text style={styles.cardParagraph}>
-                Multiple Access Protocols: ALOHA, Carrier Sense Multiple Access
-                Protocols. IEEE802.x - Ethernet, Switched Ethernet, Fast
-                Ethernet, Gigabit Ethernet, 10 Gigabit Ethernet, Wireless LANs -
-                IEEE 802 xx, Bluetooth, Bridges, Virtual LANs. Network Layer:
-                Design Issues, Store-and-Forward Packet Switching,
-                Virtual-Circuit and Datagram Networks.
-              </Text>
-              <Text style={styles.cardParagraph}>
-                IP Addressing (IPV4 & IPV6), Routing: Shortest Path Algorithms,
-                Flooding, Distance Vector Routing, Link State Routing,
-                Hierarchical Routing, Broadcast Routing, Multicast Routing,
-                Anycast Routing.
-              </Text>
-              <Text style={styles.cardParagraph}>
-                Routing for Mobile Hosts, Routing in Ad Hoc Networks, Congestion
-                Control – Approaches. Internet Control Protocols, Label
-                Switching and MPLS, OSPF, BGP, Internet Multicasting, Mobile IP.
-              </Text>
-              <Text style={styles.cardParagraph}>
-                Transport Layer: Addressing, Connection Establishment,
-                Connection Release, Flow Control and Buffering, Multiplexing,
-                Congestion Control Algorithms UDP, Application Layer.
-              </Text>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={styles.cardHeading}>Lecture Plan:</Text>
-              <Table borderStyle={{ borderWidth: 2, borderColor: "#F2F2F2" }}>
-                <Row
-                  data={state.lectureHead}
-                  flexArr={[1, 4]}
-                  style={styles.tableHead}
-                  textStyle={styles.tableHeadText}
-                />
-                <Rows
-                  data={state.lectureData}
-                  flexArr={[1, 4]}
-                  textStyle={styles.tableText}
-                />
-                <Row
-                  data={state.lectureHead}
-                  flexArr={[1, 4]}
-                  textStyle={styles.tableText}
-                />
-              </Table>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={styles.cardHeading}>Text Books:</Text>
-              <View style={styles.cardBulletContainer}>
-                <View style={styles.bulletIcon}>
-                  <Ionicons name="ios-radio-button-on" size={10} />
-                </View>
-                <View>
-                  <Text style={styles.bulletContent}>
-                    To understand Tanenbaum, Andrew. Computer Networks. 3rd ed.
-                    Upper Saddle River, NJ: Prentice Hall. ISBN: 0133499456.
-                  </Text>
-                </View>
-              </View>
-              <View style={styles.cardBulletContainer}>
-                <View style={styles.bulletIcon}>
-                  <Ionicons name="ios-radio-button-on" size={10} />
-                </View>
-                <View>
-                  <Text style={styles.bulletContent}>
-                    TCP/IP. Protocol Suite. Fourth Edition. Behrouz A. Forouzan
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.card}>
-              <Text style={styles.cardHeading}>Contact Details:</Text>
-              <Text style={styles.cardParagraph}>
-                Dr. Brijesh Kumar Chaurasia
-              </Text>
-              <Text style={styles.cardParagraph}>
-                Department of IT, IIIT Lucknow
-              </Text>
-              <Text style={styles.cardParagraph}>
-                Email: brijesh@iiitl.ac.in, hod.it@iiitl.ac.in
-              </Text>
-            </View>
-            
-          </View>
-        </ScrollView> */}
-      </View>
-    );
   }
 }
 
