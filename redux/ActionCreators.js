@@ -110,6 +110,7 @@ export const subjectError = (errorMsg) => ({
 });
 
 export const fetchSubjectInfo = (subCode) => async dispatch => {
+    dispatch(subjectInfoLoading());
     db.collection('SubjectInfo')
     .doc(`${subCode}`).
     get().
@@ -117,8 +118,16 @@ export const fetchSubjectInfo = (subCode) => async dispatch => {
         // console.log(doc.data());
         dispatch(subjectInfoFetch(doc.data()));
     })
-    .catch(error => {dispatch(subjectInfoError(error))});
+    .catch(error => {
+        dispatch(subjectInfoError(error));
+        console.log(error);
+    });
 };
+
+export const subjectInfoLoading = () => ({
+    type : ActionTypes.SUBJECT_INFO_LOADING,
+    payload : true
+});
 
 export const subjectInfoFetch = (subjectInfo) => ({
     type : ActionTypes.SUBJECT_INFO_FETCH,
