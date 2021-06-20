@@ -451,6 +451,8 @@ export const createAssignment = (data) => async dispatch => {
                     due : data.due,
                     file : downloadURL,
                     points : data.points,
+                    pointsDescription: data.pointsDescription,
+                    pointsDistribution: data.pointsDistribution,
                     postdate : new Date(),
                     professor : data.professor,
                     title : data.title,
@@ -486,7 +488,7 @@ export const checkAssignment = (data) => async dispatch => {
     dispatch(checkAssignmentLoading());
 
     db.collection(`${data.subcode}`).doc(`${data.title}`).set({
-        [data.email] : {marks : data.points} 
+        [data.email] : {marks : data.totalMarks, marksDistribution: data.marksArr} 
     },{merge : true})
     .then(() => {
         dispatch(checkAssignmentDone());

@@ -4,7 +4,7 @@ import { Button, Icon, Input, Text} from 'react-native-elements'
 import * as DocumentPicker from 'expo-document-picker'
 import { connect } from 'react-redux'
 import DateTimePicker from '@react-native-community/datetimepicker'
-import {TouchableOpacity} from 'react-native-gesture-handler'
+import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler'
 import { createAssignment } from '../redux/ActionCreators'
 
 const mapStateToProps = (state) => ({
@@ -23,11 +23,82 @@ class AddAssignmentComponent extends Component {
         file : null,
         title : null,
         description : null,
-        points : null,
         due : new Date(),
         show : false,
         postdate : null,
+        points : 0,
+        pointsDescription: [""],
+        pointsDistribution: [0]
     };
+
+    _addPointsCategory = () => {
+        var newPointsDescription = [...this.state.pointsDescription, ""];
+        var newPointsDistribution = [...this.state.pointsDistribution, 0];
+        this.setState({
+            pointsDescription: newPointsDescription,
+            pointsDistribution: newPointsDistribution
+        })
+    }
+
+    _pointsDescriptionChange(category, i) {
+        var arr=this.state.pointsDescription;
+        arr[i]=(category);
+        this.setState({pointsDescription: arr});
+    }
+
+    _pointsDistributionChange(points, i) {
+        var arr=this.state.pointsDistribution;
+        arr[i]=(isNaN(parseInt(points))? 0: parseInt(points));
+        var sum = 0;
+        for(var i=0; i<arr.length; i++) {
+                sum+=arr[i];
+        }
+        this.setState({pointsDistribution: arr, points: sum});
+    }
+
+    _deletePointsCategory(i) {
+        if(this.state.pointsDescription.length === 1) return;
+        var newPointsDescription = this.state.pointsDescription.filter((e, _i) => {
+            if(_i!==i) return true;
+        });
+        var newPointsDistribution = this.state.pointsDistribution.filter((e, _i) => {
+            if(_i!==i) return true;
+        });
+        this.setState({
+            pointsDescription: newPointsDescription,
+            pointsDistribution: newPointsDistribution
+        })
+    }
+
+    _handleSubmit() {
+        var error = "";
+        if(this.state.title == null) {
+            error="Title not defined"
+        } else if(this.state.file == null) {
+            error="No file addded";
+        } else if(this.state.pointsDistribution.length == 1 && this.state.pointsDistribution == 0) {
+            error="Define atlease one category";
+        }
+        if(error !== "") {
+            console.log("error adding assignment : " + error);
+            return;
+        }
+
+        this.props.createAssignmemt({
+            file : this.state.file.uri,
+            professor : this.props.user.displayName,
+            title : this.state.title,
+            postdate : (new Date()),
+            due : this.state.due,
+            description : this.state.description,
+            points : this.state.points,
+            pointsDescription : this.state.pointsDescription,
+            pointsDistribution : this.state.pointsDistribution,
+            subcode : this.state.data.subcode,
+            type : this.state.data.type,
+            navigation : this.props.navigation
+        });
+    }
 
     _pickDocument = async () => {
 	    let result = await DocumentPicker.getDocumentAsync({});
@@ -46,6 +117,7 @@ class AddAssignmentComponent extends Component {
 
         this.props.navigation.setOptions({title : `${this.state.data.subname}`})
         return(
+            <ScrollView>
             <View style = {styles.container}>
                 <View style = {{
                         borderBottomWidth : 1,
@@ -117,19 +189,7 @@ class AddAssignmentComponent extends Component {
                         />
                     }
                 />
-                <Input
-                    placeholder="Maximum Marks"
-                    value = {this.state.points}
-                    onChangeText = {(points) => {this.setState({points})}}
-                    leftIcon = {
-                        <Icon
-                            type = "material"
-                            name = "description"
-                            size = {15}
-                            color ='grey'
-                        />
-                    }
-                />
+                
                 <TouchableOpacity
                     activeOpacity = {0.5}
                     onPress = {() => { this.setState({show : true})}}
@@ -156,6 +216,74 @@ class AddAssignmentComponent extends Component {
                         display="default"
                         onChange={this.onChange}
                     />)}
+
+                <View style={{marginBottom: 2}}>
+                    <View style={{paddingHorizontal: 10, marginBottom: 10}}>
+                        <Text style={{fontSize: 18, color: "grey"}}>Marks Distribution :</Text>
+                    </View>
+                    {
+                        this.state.pointsDescription.map((e, i) => (
+                            <View style={{flexDirection: "row"}} key={i}>
+                                <View style={{flex: 0.1, paddingTop: 15}}>
+                                    <Icon
+                                        type = 'font-awesome-5'
+                                        name = 'trash'
+                                        size = {15}
+                                        color = 'grey'
+                                        onPress={() => this._deletePointsCategory(i)}
+                                    />
+                                </View>
+                                <View style={{flex: 0.6}}>
+                                    <Input 
+                                        placeholder="Category"
+                                        style={{paddingLeft: 2}}
+                                        value={e}
+                                        onChangeText={(value) => this._pointsDescriptionChange(value, i)}
+                                    />
+                                </View>
+                                <View style={{flex: 0.3}}>
+                                    <Input 
+                                        placeholder="Marks"
+                                        keyboardType = 'number-pad'
+                                        style={{paddingLeft: 2}}
+                                        value={this.state.pointsDistribution[i]>0 ? this.state.pointsDistribution[i].toString() : ""}
+                                        onChangeText={(points) => this._pointsDistributionChange(points, i)}
+                                    />
+                                </View>
+                            </View>
+                        ))
+                    }
+                    
+                    <Button
+                        type = 'clear'
+                        icon={
+                            <Icon
+                            type = 'font-awesome-5'
+                            name = 'plus'
+                            size = {15}
+                            color = '#1967d2' 
+                            containerStyle = {{marginRight : 5}}
+                            />}
+                        title = 'Add a category'
+                        titleStyle = {{fontWeight : 'bold'}}
+                        onPress = {() => this._addPointsCategory()}
+                    />
+                </View>
+
+                <Input
+                    editable={false}
+                    placeholder="Maximum Marks"
+                    value = {"Total = "+this.state.points.toString()}
+                    style={{color: "grey"}}
+                    leftIcon = {
+                        <Icon
+                            type = "material"
+                            name = "description"
+                            size = {15}
+                            color ="grey"
+                        />
+                    }
+                />
                 </View>
                 <View>
                     <View style = {{marginBottom : 10}}>
@@ -204,7 +332,7 @@ class AddAssignmentComponent extends Component {
                                     color = '#1967d2'
                                     containerStyle = {{marginRight : 5}}
                                     />}
-                                title = 'Add or create'
+                                title = 'Attach a file'
                                 titleStyle = {{fontWeight : 'bold'}}
                                 color = 'white'
                                 onPress = {() => this._pickDocument()}
@@ -216,27 +344,13 @@ class AddAssignmentComponent extends Component {
                         type = 'solid'
                         title = 'Submit'
                         color = 'white'
-                        onPress = {this.state.file == null ?
-                                    () => console.log("No file added")
-                                    :
-                                    () => {this.props.createAssignmemt({
-                                                        file : this.state.file.uri,
-                                                        professor : this.props.user.displayName,
-                                                        title : this.state.title,
-                                                        postdate : postdate,
-                                                        due : this.state.due,
-                                                        description : this.state.description,
-                                                        points : this.state.points,
-                                                        subcode : this.state.data.subcode,
-                                                        type : this.state.data.type,
-                                                        navigation : this.props.navigation
-                                                    })}
-                                }
+                        onPress = {() => this._handleSubmit()}
                         loading = {this.props.isLoading}
                         titleStyle = {{fontWeight : 'bold'}}
                     />
                 </View>
             </View>
+            </ScrollView>
         );
     }
 }

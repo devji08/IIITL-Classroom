@@ -1,3 +1,4 @@
+import { Updates } from 'expo'
 import React, { Component } from 'react'
 import { View, StyleSheet, Linking } from 'react-native'
 import { Text, Icon, Button, Input } from 'react-native-elements'
@@ -18,8 +19,27 @@ class CheckAssignmentComponent extends Component {
     state = {
         data : this.props.route.params.data,
         assignment : this.props.route.params.assignment,
-        points : 0
+        totalMarks : 0,
+        marksArr: []
     };
+    
+    componentDidMount() {
+        var len = this.state.assignment.pointsDistribution.length;
+        var arr=[];
+        while(len--) arr.push(0);
+        this.setState({marksArr: arr});
+    }
+
+    _handleMarksChange(marks, i) {
+        var arr=this.state.marksArr;
+        arr[i]=parseInt(marks);
+        var sum = 0;
+        for(var i=0; i<arr.length; i++) {
+            if(!isNaN(arr[i]))
+                sum+=arr[i];
+        }
+        this.setState({marksArr: arr, totalMarks: sum});
+    }
 
     render() {
         console.log(this.state);
@@ -136,10 +156,31 @@ class CheckAssignmentComponent extends Component {
                 </TouchableOpacity>
                 <View>
                     <View style = {{padding : 20, backgroundColor : 'white', borderRadius : 15, borderColor : '#dadce0', borderWidth : 1, marginBottom : 10}}>
+                        {
+                            this.state.marksArr.map((e, i) => (
+                                <Input
+                                    key={i}
+                                    keyboardType = 'number-pad'
+                                    placeholder = {`${this.state.assignment.pointsDescription[i]} (${this.state.assignment.pointsDistribution[i]})`}
+                                    value={e>0 ? e.toString() : 0}
+                                    onChangeText = {(marks) => this._handleMarksChange(marks ,i)}
+                                    leftIcon = {
+                                        <Icon
+                                            type = "material"
+                                            name = "description"
+                                            size = {15}
+                                            color ='grey'
+                                        />
+                                    }
+                                />
+                            ))
+                        }
+                        
                         <Input
                             placeholder = "Marks Obtained"
-                            value = {this.state.points}
-                            onChangeText = {(points) => {this.setState({points})}}
+                            value = {"Total = "+this.state.totalMarks.toString()}
+                            editable = {false}
+                            style = {{color: "grey"}}
                             leftIcon = {
                                 <Icon
                                     type = "material"
@@ -153,7 +194,7 @@ class CheckAssignmentComponent extends Component {
                         type = 'solid'
                         title = 'Submit'
                         color = 'white'
-                        onPress = {() => this.props.checkAssignment({subcode : this.state.assignment.subcode, title : this.state.assignment.title, email : this.state.data.email, points : this.state.points, navigation : this.props.navigation})}
+                        onPress = {() => this.props.checkAssignment({subcode : this.state.assignment.subcode, title : this.state.assignment.title, email : this.state.data.email, totalMarks : this.state.totalMarks, marksArr: this.state.marksArr, navigation : this.props.navigation})}
                         loading = {this.props.isLoading}
                         titleStyle = {{fontWeight : 'bold'}}
                     />
