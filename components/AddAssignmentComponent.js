@@ -1,3 +1,6 @@
+// check all errors in submit button
+// after finalizing revert changes in action creators
+
 import React, { Component } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { Button, Icon, Input, Text} from 'react-native-elements'
@@ -21,39 +24,52 @@ class AddAssignmentComponent extends Component {
     state = {
         data : this.props.route.params.data,
         file : null,
-        title : null,
-        description : null,
-        due : new Date(),
+        title : "",
+        description : "",
+        due : null,
         show : false,
-        postdate : null,
         points : 0,
         pointsDescription: [""],
-        pointsDistribution: [0]
+        pointsDistribution: [0],
+        errors: {
+            title: "",
+            due: "",
+            file: "",
+            pointsDescription0: "",
+            pointsDistribution0: ""
+        }
     };
 
     _addPointsCategory = () => {
-        var newPointsDescription = [...this.state.pointsDescription, ""];
-        var newPointsDistribution = [...this.state.pointsDistribution, 0];
+        var pointsDescription = [...this.state.pointsDescription, ""];
+        var pointsDistribution = [...this.state.pointsDistribution, 0];
+        var len = this.state.pointsDescription.length;
+        var errors = this.state.errors;
+        errors[`pointsDescription${len}`] = "";
+        errors[`pointsDistribution${len}`] = "";
         this.setState({
-            pointsDescription: newPointsDescription,
-            pointsDistribution: newPointsDistribution
-        })
+            pointsDescription,
+            pointsDistribution,
+            errors,
+        });
     }
 
     _pointsDescriptionChange(category, i) {
         var arr=this.state.pointsDescription;
-        arr[i]=(category);
-        this.setState({pointsDescription: arr});
+        arr[i]=(category.trimStart());
+        var errors = this.state.errors;
+        errors[`pointsDescription${i}`] = ((arr[i] == "")? "Cannot be empty": "");
+        this.setState({pointsDescription: arr, errors});
     }
 
     _pointsDistributionChange(points, i) {
         var arr=this.state.pointsDistribution;
         arr[i]=(isNaN(parseInt(points))? 0: parseInt(points));
         var sum = 0;
-        for(var i=0; i<arr.length; i++) {
-                sum+=arr[i];
-        }
-        this.setState({pointsDistribution: arr, points: sum});
+        for(var j=0; j<arr.length; j++) sum+=arr[j];
+        var errors = this.state.errors;
+        errors[`pointsDistribution${i}`] = ((arr[i] == 0)? "required": "");
+        this.setState({pointsDistribution: arr, points: sum, errors});
     }
 
     _deletePointsCategory(i) {
@@ -64,56 +80,75 @@ class AddAssignmentComponent extends Component {
         var newPointsDistribution = this.state.pointsDistribution.filter((e, _i) => {
             if(_i!==i) return true;
         });
+        var len = this.state.pointsDescription.length;
+        var errors = this.state.errors;
+        for(var j=i; j<len-1; j++) {
+            errors[`pointsDescription${j}`] = errors[`pointsDescription${j+1}`];
+            errors[`pointsDistribution${j}`] = errors[`pointsDistribution${j+1}`];
+        }
+        delete errors[`pointsDescription${len-1}`];
+        delete errors[`pointsDistribution${len-1}`];
         this.setState({
             pointsDescription: newPointsDescription,
-            pointsDistribution: newPointsDistribution
-        })
-    }
-
-    _handleSubmit() {
-        var error = "";
-        if(this.state.title == null) {
-            error="Title not defined"
-        } else if(this.state.file == null) {
-            error="No file addded";
-        } else if(this.state.pointsDistribution.length == 1 && this.state.pointsDistribution == 0) {
-            error="Define atlease one category";
-        }
-        if(error !== "") {
-            console.log("error adding assignment : " + error);
-            return;
-        }
-
-        this.props.createAssignmemt({
-            file : this.state.file.uri,
-            professor : this.props.user.displayName,
-            title : this.state.title,
-            postdate : (new Date()),
-            due : this.state.due,
-            description : this.state.description,
-            points : this.state.points,
-            pointsDescription : this.state.pointsDescription,
-            pointsDistribution : this.state.pointsDistribution,
-            subcode : this.state.data.subcode,
-            type : this.state.data.type,
-            navigation : this.props.navigation
+            pointsDistribution: newPointsDistribution,
+            errors
         });
     }
 
     _pickDocument = async () => {
 	    let result = await DocumentPicker.getDocumentAsync({});
-        if(!result.cancelled){
-            this.setState({file : result})
+        if(result.type == "success") {
+            this.setState({file : result, errors: {...this.state.errors, file: ""}});
         }
+        if(!this.state.file) this.setState({errors: {...this.state.errors, file: "File required"}});
 	}
 
-    onChange = (event, selectedDate) => {
-        var postdate = ((selectedDate).toDateString().substring(0,10));
-        this.setState({due : selectedDate, postdate : postdate, show : false});
+    _dateChange = (event, selectedDate) => {
+        if(selectedDate) {
+            this.setState({due : selectedDate, show : false, errors: {...this.state.errors, due: ""}});
+        } else {
+            var errors = this.state.errors;
+            if(!this.state.due) errors.due = "Due date required";
+            this.setState({show: false, errors});
+        }
     };
 
+    _handleSubmit() {
+        var f = 1;
+        var errors = this.state.errors;
+        if(!this.state.title) f=0, errors.title = "Title cannot be empty"
+        if(!this.state.due) f=0, errors.due = "Due date required"
+        if(!this.state.file) f=0, errors.file = "File required"
+        var pointsDescription = this.state.pointsDescription;
+        var pointsDistribution = this.state.pointsDistribution;
+        var len = pointsDescription.length;
+        for(var i=0; i<len; i++) {
+            if(!pointsDescription[i]) f=0, errors[`pointsDescription${i}`] = "Cannot be empty";
+            if(!pointsDistribution[i]) f=0, errors[`pointsDistribution${i}`] = "required";
+        }
+
+        if(f) {
+            this.props.createAssignmemt({
+                file : this.state.file?.uri,
+                professor : this.props.user.displayName,
+                title : this.state.title,
+                postdate : (new Date()),
+                due : this.state.due,
+                description : this.state.description,
+                points : this.state.points,
+                pointsDescription : this.state.pointsDescription,
+                pointsDistribution : this.state.pointsDistribution,
+                subcode : this.state.data.subcode,
+                type : this.state.data.type,
+                navigation : this.props.navigation
+            });
+        } else {
+            this.setState({errors});
+        }
+    }
+
     render() {
-        var postdate = ((new Date()).toDateString().substring(0,10));
+        var currentDate = ((new Date()).toDateString().substring(0,10));
 
         this.props.navigation.setOptions({title : `${this.state.data.subname}`})
         return(
@@ -147,7 +182,7 @@ class AddAssignmentComponent extends Component {
                                 fontFamily : 'sans-serif',
                                 fontWeight : '400'
                             }}
-                        >{this.props.user.displayName} • {postdate}</Text>
+                        >{this.props.user.displayName} • {currentDate}</Text>
                     </View>
                     <View>
                         <Text
@@ -162,11 +197,17 @@ class AddAssignmentComponent extends Component {
                     </View>
                     
                 </View>
-                <View style = {{padding : 10, marginBottom : 20}}>
+                <View style = {{padding : 5}}>
                 <Input
                     placeholder = "Title"
                     value = {this.state.title}
-                    onChangeText = {(title) => {this.setState({title})}}
+                    onChangeText = {(title) => {
+                        if(title === "") {
+                            this.setState({errors: {...this.state.errors, title: "Title cannot be empty"}, title});
+                        } else {
+                            this.setState({errors: {...this.state.errors, title: ""}, title});
+                        }
+                    }}
                     leftIcon = {
                         <Icon
                             type = "material"
@@ -175,6 +216,7 @@ class AddAssignmentComponent extends Component {
                             color ='grey'
                         />
                     }
+                    errorMessage = { this.state.errors.title }
                 />
                 <Input
                     placeholder="Description"
@@ -191,13 +233,12 @@ class AddAssignmentComponent extends Component {
                 />
                 
                 <TouchableOpacity
-                    activeOpacity = {0.5}
                     onPress = {() => { this.setState({show : true})}}
                 >
+                    <View pointerEvents='none'>
                     <Input
                         placeholder="Due date"
-                        disabled
-                        value = {this.state.postdate}
+                        value = {this.state.due?.toDateString().substring(0,10)}
                         leftIcon = {
                             <Icon
                                 type = "material"
@@ -206,15 +247,18 @@ class AddAssignmentComponent extends Component {
                                 color ='grey'
                             />
                         }
+                        errorMessage={this.state.errors.due}
                     />
+                    </View>
                 </TouchableOpacity>
                     {this.state.show && (<DateTimePicker
                         testID="dateTimePicker"
-                        value={this.state.due}
+                        value={this.state.due? this.state.due : new Date()}
                         mode= 'date'
                         is24Hour={true}
                         display="default"
-                        onChange={this.onChange}
+                        onChange={this._dateChange}
+                        minimumDate={new Date()}
                     />)}
 
                 <View style={{marginBottom: 2}}>
@@ -239,6 +283,7 @@ class AddAssignmentComponent extends Component {
                                         style={{paddingLeft: 2}}
                                         value={e}
                                         onChangeText={(value) => this._pointsDescriptionChange(value, i)}
+                                        errorMessage={this.state.errors[`pointsDescription${i}`]}
                                     />
                                 </View>
                                 <View style={{flex: 0.3}}>
@@ -248,6 +293,7 @@ class AddAssignmentComponent extends Component {
                                         style={{paddingLeft: 2}}
                                         value={this.state.pointsDistribution[i]>0 ? this.state.pointsDistribution[i].toString() : ""}
                                         onChangeText={(points) => this._pointsDistributionChange(points, i)}
+                                        errorMessage={this.state.errors[`pointsDistribution${i}`]}
                                     />
                                 </View>
                             </View>
@@ -288,6 +334,7 @@ class AddAssignmentComponent extends Component {
                 <View>
                     <View style = {{marginBottom : 10}}>
                         {this.state.file != null ? 
+                            <TouchableOpacity onPress={this._pickDocument}>
                             <View style = {{borderWidth: 1, borderRadius : 15, borderColor : '#dadce0', marginBottom : 10}}>
                                 <View style = {{flexDirection : 'row'}}>
                                         <View
@@ -321,22 +368,30 @@ class AddAssignmentComponent extends Component {
                                         </View>
                                     </View>
                             </View>
+                            </TouchableOpacity>
                             : 
-                            <Button
-                                type = 'clear'
-                                icon={
-                                    <Icon
-                                    type = 'font-awesome-5'
-                                    name = 'plus'
-                                    size = {15}
-                                    color = '#1967d2'
-                                    containerStyle = {{marginRight : 5}}
-                                    />}
-                                title = 'Attach a file'
-                                titleStyle = {{fontWeight : 'bold'}}
-                                color = 'white'
-                                onPress = {() => this._pickDocument()}
-                            />
+                            <View>
+                                <Button
+                                    type = 'clear'
+                                    icon={
+                                        <Icon
+                                        type = 'font-awesome-5'
+                                        name = 'plus'
+                                        size = {15}
+                                        color = '#1967d2'
+                                        containerStyle = {{marginRight : 5}}
+                                        />}
+                                    title = 'Attach a file'
+                                    titleStyle = {{fontWeight : 'bold'}}
+                                    color = 'white'
+                                    onPress = {() => this._pickDocument()}
+                                />
+                                {this.state.errors.file != "" && 
+                                    <Text style={{textAlign: 'center', color: "red"}}>
+                                        {this.state.errors.file}
+                                    </Text>
+                                }
+                            </View>
                     }
                     </View>
 
