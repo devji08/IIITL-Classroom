@@ -1,6 +1,3 @@
-// check all errors in submit button
-// after finalizing revert changes in action creators
-
 import React, { Component } from 'react'
 import { View, StyleSheet } from 'react-native'
 import { Button, Icon, Input, Text} from 'react-native-elements'
@@ -236,19 +233,19 @@ class AddAssignmentComponent extends Component {
                     onPress = {() => { this.setState({show : true})}}
                 >
                     <View pointerEvents='none'>
-                    <Input
-                        placeholder="Due date"
-                        value = {this.state.due?.toDateString().substring(0,10)}
-                        leftIcon = {
-                            <Icon
-                                type = "material"
-                                name = "event"
-                                size = {15}
-                                color ='grey'
-                            />
-                        }
-                        errorMessage={this.state.errors.due}
-                    />
+                        <Input
+                            placeholder="Due date"
+                            value = {this.state.due?.toDateString().substring(0,10)}
+                            leftIcon = {
+                                <Icon
+                                    type = "material"
+                                    name = "event"
+                                    size = {15}
+                                    color ='grey'
+                                />
+                            }
+                            errorMessage={this.state.errors.due}
+                        />
                     </View>
                 </TouchableOpacity>
                     {this.state.show && (<DateTimePicker
@@ -335,8 +332,8 @@ class AddAssignmentComponent extends Component {
                     <View style = {{marginBottom : 10}}>
                         {this.state.file != null ? 
                             <TouchableOpacity onPress={this._pickDocument}>
-                            <View style = {{borderWidth: 1, borderRadius : 15, borderColor : '#dadce0', marginBottom : 10}}>
-                                <View style = {{flexDirection : 'row'}}>
+                                <View style = {{borderWidth: 1, borderRadius : 15, borderColor : '#dadce0', marginBottom : 10}}>
+                                    <View style = {{flexDirection : 'row'}}>
                                         <View
                                             style = {{
                                                 marginRight : 10,
@@ -367,7 +364,7 @@ class AddAssignmentComponent extends Component {
                                             >{this.state.file.name}</Text>
                                         </View>
                                     </View>
-                            </View>
+                                </View>
                             </TouchableOpacity>
                             : 
                             <View>

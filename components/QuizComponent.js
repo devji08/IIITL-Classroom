@@ -341,7 +341,7 @@ class QuizComponent extends Component {
                         </View>
                         {this.state.myWork?.marks? (
                             <View style={{marginTop: 5, marginBottom: 15}}>
-                                <Text style={{fontSize:18, fontWeight: "bold", marginVertical: 10}}>Report card :</Text>
+                                <Text style={{fontSize:18, fontWeight: "bold", marginVertical: 10}}>Marks Distribution :</Text>
                                 <Table borderStyle={{ borderWidth: 2, borderColor: "#F2F2F2" }} >
                                     <Row
                                         data={["Category", "Obtained", "Maximum"]}
