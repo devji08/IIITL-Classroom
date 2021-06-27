@@ -3,6 +3,7 @@ import {View, StyleSheet, Text, Linking} from 'react-native'
 import { connect } from 'react-redux'
 import {Icon, Button} from 'react-native-elements'
 import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler'
+import { Table, Row, Rows } from "react-native-table-component";
 import * as DocumentPicker from 'expo-document-picker'
 import { submitAssignment } from '../redux/ActionCreators'
 import db from './firebase.js'
@@ -94,6 +95,7 @@ class QuizComponent extends Component {
             arr.map(key => {submissions.push(this.state.records[key])});
         }
         return (
+            <ScrollView>
             <View style = {styles.container}>
                 <View>
                     <View style = {{
@@ -337,6 +339,31 @@ class QuizComponent extends Component {
                                 />
                             </View>
                         </View>
+                        {this.state.myWork?.marks? (
+                            <View style={{marginTop: 5, marginBottom: 15}}>
+                                <Text style={{fontSize:18, fontWeight: "bold", marginVertical: 10}}>Marks Distribution :</Text>
+                                <Table borderStyle={{ borderWidth: 2, borderColor: "#F2F2F2" }} >
+                                    <Row
+                                        data={["Category", "Obtained", "Maximum"]}
+                                        flexArr={[2, 1, 1]}
+                                        textStyle={{fontWeight: "bold", marginLeft: 5, color: "#1967d2", fontSize: 16, paddingVertical: 5}}
+                                    />
+                                    {this.state.myWork.marksDistribution.map((e, i) => (
+                                            <Row
+                                                key={i}
+                                                data={[this.state.data.pointsDescription[i], e, this.state.data.pointsDistribution[i]]}
+                                                flexArr={[2, 1, 1]}
+                                                textStyle={{marginHorizontal: 3, marginVertical: 10, marginLeft: 5, fontSize: 15}}
+                                            />
+                                    ))}
+                                    <Row
+                                        data={["Total", this.state.myWork.marks, this.state.data.points]}
+                                        flexArr={[2, 1, 1]}
+                                        textStyle={{fontWeight: "bold", marginHorizontal: 3, marginVertical: 10, marginLeft: 5, fontSize: 15}}
+                                    />
+                                </Table>
+                            </View>
+                        ):<></>}
                     </View>
                     :
                     <View>
@@ -344,7 +371,7 @@ class QuizComponent extends Component {
                             <Text style ={{fontSize : 25, color : '#3c4043', fontFamily : 'Roboto', fontWeight : '400', marginBottom : 10, borderBottomColor : '#dadce0', borderBottomWidth : 1, padding : 10}}>Submissions</Text>
                             {submissions.length == 0 ? 
                             <View style = {{padding : 10}}>
-                                <Text style = {{fontSize : 15, color : 'gray', fontFamily : 'Roboto',fontWeight : '400', marginBottom : 10}}>No submissions are available currently.</Text>
+                                <Text style = {{fontSize : 15, color : 'grey', fontFamily : 'Roboto',fontWeight : '400', marginBottom : 10}}>No submissions are available currently.</Text>
                             </View>
                             :
                             <ScrollView>
@@ -354,6 +381,7 @@ class QuizComponent extends Component {
                     </View>
                 }                        
             </View>
+            </ScrollView>
         )
     }
 }

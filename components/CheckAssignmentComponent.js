@@ -18,8 +18,77 @@ class CheckAssignmentComponent extends Component {
     state = {
         data : this.props.route.params.data,
         assignment : this.props.route.params.assignment,
-        points : 0
+        totalMarks : 0,
+        marksArr: [],
+        visited: [],
+        errors: [],
     };
+    
+    componentDidMount() {
+        var len = this.state.assignment.pointsDistribution.length;
+        var marksArr=[];
+        var visited=[];
+        var errors = this.state.errors;
+        for(var i=0; i<len; i++) {
+            marksArr.push(0);
+            errors.push("");
+            visited.push(0);
+        }
+        this.setState({marksArr, visited, errors});
+    }
+
+    _handleMarksChange(marks, i) {
+        var marksArr=this.state.marksArr;
+        marksArr[i]=isNaN(parseInt(marks))? 0 : parseInt(marks);
+        var totalMarks = 0;
+        for(var j=0; j<marksArr.length; j++) {
+                totalMarks+=marksArr[j];
+        }
+        var errors = this.state.errors;
+        var pointsDistribution = this.state.assignment.pointsDistribution;
+        if(marksArr[i] > pointsDistribution[i]) {
+            errors[i] = `Cannot be greater than ${pointsDistribution[i]}`;
+        } else if(marksArr[i] < 0) {
+            errors[i] = `Cannot be smaller than 0`;
+        } else {
+            errors[i] = "";
+        }
+        var visited = this.state.visited;
+        visited[i]=(marks == "")? 0 : 1;
+        this.setState({marksArr, totalMarks, visited, errors});
+    }
+
+    _handleSubmit() {
+        var marksArr = this.state.marksArr;
+        var pointsDistribution = this.state.assignment.pointsDistribution;
+        var visited = this.state.visited;
+        var errors = this.state.errors;
+        var len = marksArr.length, f=1;
+        for(var i=0; i<len; i++) {
+            if(marksArr[i] > pointsDistribution[i]) {
+                errors[i] = `Cannot be greater than ${pointsDistribution[i]}`;
+                f=0;
+            } else if(marksArr[i] < 0) {
+                errors[i] = `Cannot be smaller than 0`;
+                f=0;
+            } else if(visited[i] == 0) {
+                errors[i] = `Cannot be empty`;
+                f=0;
+            }
+        }
+        if(f) {
+            this.props.checkAssignment({
+                subcode : this.state.assignment.subcode,
+                title : this.state.assignment.title,
+                email : this.state.data.email,
+                totalMarks : this.state.totalMarks,
+                marksArr: this.state.marksArr,
+                navigation : this.props.navigation
+            });
+        } else {
+            this.setState({errors});
+        }
+    }
 
     render() {
         console.log(this.state);
@@ -136,10 +205,32 @@ class CheckAssignmentComponent extends Component {
                 </TouchableOpacity>
                 <View>
                     <View style = {{padding : 20, backgroundColor : 'white', borderRadius : 15, borderColor : '#dadce0', borderWidth : 1, marginBottom : 10}}>
+                        {
+                            this.state.marksArr.map((e, i) => (
+                                <Input
+                                    key={i}
+                                    keyboardType = 'number-pad'
+                                    placeholder = {`${this.state.assignment.pointsDescription[i]} (${this.state.assignment.pointsDistribution[i]})`}
+                                    value={e>0 ? e.toString() : 0}
+                                    onChangeText = {(marks) => this._handleMarksChange(marks ,i)}
+                                    leftIcon = {
+                                        <Icon
+                                            type = "material"
+                                            name = "description"
+                                            size = {15}
+                                            color ='grey'
+                                        />
+                                    }
+                                    errorMessage={this.state.errors[i]}
+                                />
+                            ))
+                        }
+                        
                         <Input
                             placeholder = "Marks Obtained"
-                            value = {this.state.points}
-                            onChangeText = {(points) => {this.setState({points})}}
+                            value = {"Total = "+this.state.totalMarks.toString()}
+                            editable = {false}
+                            style = {{color: "grey"}}
                             leftIcon = {
                                 <Icon
                                     type = "material"
@@ -153,7 +244,7 @@ class CheckAssignmentComponent extends Component {
                         type = 'solid'
                         title = 'Submit'
                         color = 'white'
-                        onPress = {() => this.props.checkAssignment({subcode : this.state.assignment.subcode, title : this.state.assignment.title, email : this.state.data.email, points : this.state.points, navigation : this.props.navigation})}
+                        onPress = {() => this._handleSubmit()}
                         loading = {this.props.isLoading}
                         titleStyle = {{fontWeight : 'bold'}}
                     />

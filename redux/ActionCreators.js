@@ -109,6 +109,36 @@ export const subjectError = (errorMsg) => ({
     payload : errorMsg
 });
 
+export const fetchSubjectInfo = (subCode) => async dispatch => {
+    dispatch(subjectInfoLoading());
+    db.collection('SubjectInfo')
+    .doc(`${subCode}`).
+    get().
+    then(function(doc) {
+        // console.log(doc.data());
+        dispatch(subjectInfoFetch(doc.data()));
+    })
+    .catch(error => {
+        dispatch(subjectInfoError(error));
+        console.log(error);
+    });
+};
+
+export const subjectInfoLoading = () => ({
+    type : ActionTypes.SUBJECT_INFO_LOADING,
+    payload : true
+});
+
+export const subjectInfoFetch = (subjectInfo) => ({
+    type : ActionTypes.SUBJECT_INFO_FETCH,
+    payload : subjectInfo
+});
+
+export const subjectInfoError = (errorMsg) => ({
+    type : ActionTypes.SUBJECT_INFO_ERROR,
+    payload : errorMsg
+});
+
 export const fetchProfessorSubject = (email) => async dispatch => {
     db.collection('ProfessorMatrix')
     .doc(`${email}`).
@@ -421,6 +451,8 @@ export const createAssignment = (data) => async dispatch => {
                     due : data.due,
                     file : downloadURL,
                     points : data.points,
+                    pointsDescription: data.pointsDescription,
+                    pointsDistribution: data.pointsDistribution,
                     postdate : new Date(),
                     professor : data.professor,
                     title : data.title,
@@ -456,7 +488,7 @@ export const checkAssignment = (data) => async dispatch => {
     dispatch(checkAssignmentLoading());
 
     db.collection(`${data.subcode}`).doc(`${data.title}`).set({
-        [data.email] : {marks : data.points} 
+        [data.email] : {marks : data.totalMarks, marksDistribution: data.marksArr} 
     },{merge : true})
     .then(() => {
         dispatch(checkAssignmentDone());
