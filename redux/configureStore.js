@@ -3,6 +3,7 @@ import logger from 'redux-logger'
 import thunk from 'redux-thunk'
 import { authentication } from './authentication.js'
 import { subjectReducer } from './subjectReducer.js'
+import { subjectInfoReducer } from './subjectInfoReducer'
 import { signUpReducer } from './signupReducer.js'
 import { feedReducer } from './feedReducer.js'
 import { postReducer } from './postReducer.js'
@@ -28,6 +29,7 @@ export const ConfigureStore = () => {
             signUpReducer,
             authentication,
             subjectReducer,
+            subjectInfoReducer,
             feedReducer,
             postReducer,
             profileReducer,

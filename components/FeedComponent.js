@@ -8,6 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AddpostComponent from './AddPostComponent.js';
 import PostComponent from './PostComponent.js';
 import ClassroomComponent from './ClassroomComponent.js';
+import SubjectInfoComponent from './SubjectInfoComponent.js';
 import { Loading } from './loadingComponent.js';
 
 const mapStateToProps = (state) => ({
@@ -78,6 +79,12 @@ export class Feed extends Component {
                 )
             }
         }
+
+        var Info = () => {
+            return (
+                <SubjectInfoComponent subCode = {this.state.subCode} />
+            )
+        }
         
         const Tab = createBottomTabNavigator();
 
@@ -86,13 +93,22 @@ export class Feed extends Component {
                 screenOptions={({ route }) => ({
                     tabBarIcon: ({ focused, color, size }) => {
                       let iconName;
-          
-                      if (route.name === 'Forum') {
-                        iconName = focused
-                          ? 'ios-information-circle'
-                          : 'ios-information-circle-outline';
-                      } else if (route.name === 'Classroom') {
-                        iconName = focused ? 'ios-list-box' : 'ios-list';
+
+                      switch (route.name) {
+                            case 'Forum':
+                                iconName = focused
+                                ? 'ios-paper'
+                                : 'md-paper';
+                                break;
+                            case 'Classroom':
+                                iconName = focused ? 'ios-list-box' : 'ios-list';
+                                break;
+                            case 'Info':
+                                iconName = focused
+                                ? 'ios-information-circle'
+                                : 'ios-information-circle-outline';
+                          default:
+                              break;
                       }
           
                       // You can return any component that you like here!
@@ -106,6 +122,7 @@ export class Feed extends Component {
                 >
                     <Tab.Screen name="Forum" component={Forum} />
                     <Tab.Screen name="Classroom" component={Classroom} />
+                    <Tab.Screen name="Info" component={Info} />
                 </Tab.Navigator>
         );
         
