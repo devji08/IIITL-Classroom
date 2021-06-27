@@ -1,4 +1,3 @@
-import { Updates } from 'expo'
 import React, { Component } from 'react'
 import { View, StyleSheet, Linking } from 'react-native'
 import { Text, Icon, Button, Input } from 'react-native-elements'
@@ -20,25 +19,75 @@ class CheckAssignmentComponent extends Component {
         data : this.props.route.params.data,
         assignment : this.props.route.params.assignment,
         totalMarks : 0,
-        marksArr: []
+        marksArr: [],
+        visited: [],
+        errors: [],
     };
     
     componentDidMount() {
         var len = this.state.assignment.pointsDistribution.length;
-        var arr=[];
-        while(len--) arr.push(0);
-        this.setState({marksArr: arr});
+        var marksArr=[];
+        var visited=[];
+        var errors = this.state.errors;
+        for(var i=0; i<len; i++) {
+            marksArr.push(0);
+            errors.push("");
+            visited.push(0);
+        }
+        this.setState({marksArr, visited, errors});
     }
 
     _handleMarksChange(marks, i) {
-        var arr=this.state.marksArr;
-        arr[i]=parseInt(marks);
-        var sum = 0;
-        for(var i=0; i<arr.length; i++) {
-            if(!isNaN(arr[i]))
-                sum+=arr[i];
+        var marksArr=this.state.marksArr;
+        marksArr[i]=isNaN(parseInt(marks))? 0 : parseInt(marks);
+        var totalMarks = 0;
+        for(var j=0; j<marksArr.length; j++) {
+                totalMarks+=marksArr[j];
         }
-        this.setState({marksArr: arr, totalMarks: sum});
+        var errors = this.state.errors;
+        var pointsDistribution = this.state.assignment.pointsDistribution;
+        if(marksArr[i] > pointsDistribution[i]) {
+            errors[i] = `Cannot be greater than ${pointsDistribution[i]}`;
+        } else if(marksArr[i] < 0) {
+            errors[i] = `Cannot be smaller than 0`;
+        } else {
+            errors[i] = "";
+        }
+        var visited = this.state.visited;
+        visited[i]=(marks == "")? 0 : 1;
+        this.setState({marksArr, totalMarks, visited, errors});
+    }
+
+    _handleSubmit() {
+        var marksArr = this.state.marksArr;
+        var pointsDistribution = this.state.assignment.pointsDistribution;
+        var visited = this.state.visited;
+        var errors = this.state.errors;
+        var len = marksArr.length, f=1;
+        for(var i=0; i<len; i++) {
+            if(marksArr[i] > pointsDistribution[i]) {
+                errors[i] = `Cannot be greater than ${pointsDistribution[i]}`;
+                f=0;
+            } else if(marksArr[i] < 0) {
+                errors[i] = `Cannot be smaller than 0`;
+                f=0;
+            } else if(visited[i] == 0) {
+                errors[i] = `Cannot be empty`;
+                f=0;
+            }
+        }
+        if(f) {
+            this.props.checkAssignment({
+                subcode : this.state.assignment.subcode,
+                title : this.state.assignment.title,
+                email : this.state.data.email,
+                totalMarks : this.state.totalMarks,
+                marksArr: this.state.marksArr,
+                navigation : this.props.navigation
+            });
+        } else {
+            this.setState({errors});
+        }
     }
 
     render() {
@@ -172,6 +221,7 @@ class CheckAssignmentComponent extends Component {
                                             color ='grey'
                                         />
                                     }
+                                    errorMessage={this.state.errors[i]}
                                 />
                             ))
                         }
@@ -194,7 +244,7 @@ class CheckAssignmentComponent extends Component {
                         type = 'solid'
                         title = 'Submit'
                         color = 'white'
-                        onPress = {() => this.props.checkAssignment({subcode : this.state.assignment.subcode, title : this.state.assignment.title, email : this.state.data.email, totalMarks : this.state.totalMarks, marksArr: this.state.marksArr, navigation : this.props.navigation})}
+                        onPress = {() => this._handleSubmit()}
                         loading = {this.props.isLoading}
                         titleStyle = {{fontWeight : 'bold'}}
                     />
